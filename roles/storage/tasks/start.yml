@@ -1,0 +1,5 @@
+---
+# file: roles/storage/tasks/start.yml
+# These tasks are run on all nodes
+- name: Storage | Mount gluster volume
+  mount: name=/mnt src=localhost:/gv0 fstype=glusterfs opts=defaults state=mounted

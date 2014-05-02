@@ -1,0 +1,53 @@
+---
+# file: roles/storage/tasks/main.yml
+
+# common tasks follow
+- name: Storage | Install pycurl 
+  apt: pkg={{ item.package }} state=present
+  with_items:
+    - { package: 'python-pycurl' }
+    - { package: 'xfsprogs' }
+
+- name: Storage | Check disk label
+  command: parted /dev/sdb print
+  register: parted_table
+
+- name: Storage | Apply disk label
+  command: parted --script --align optimal /dev/sdb mklabel msdos
+  when: parted_table.stdout.find('msdos') == -1
+
+- name: Storage | Wait for disk label to exist
+  command: /bin/sleep 5
+  when: parted_table.stdout.find('msdos') == -1
+
+- name: Storage | Create partition
+  command: parted --script --align optimal -- /dev/sdb unit compact mkpart primary xfs "1" "-1"
+  when: parted_table.stdout.find('primary') == -1
+
+- name: Storage | Wait for partition to exist
+  command: /bin/sleep 5
+  when: parted_table.stdout.find('primary') == -1
+
+- name: Storage | Create file system
+  filesystem: fstype=xfs dev=/dev/sdb1 opts="-i size=512"
+
+- name: Storage | Create mount point
+  shell: mkdir -p /data/brick1
+
+- name: Storage | Mount the device
+  mount: name=/data/brick1 src=/dev/sdb1 fstype=xfs opts=defaults dump=1 passno=2 state=mounted
+
+  - name: Storage | Create GlusterFS brick volume
+  shell: mkdir -p /data/brick1/gv0
+
+- name: Storage | Fetch gluster signing key
+  command: apt-key adv --keyserver keyserver.ubuntu.com --recv 774BAC4D
+
+- name: Storage | Add gluster repository
+  apt_repository: repo='ppa:semiosis/ubuntu-glusterfs-3.4qa'
+
+- name: Storage | Install latest gluster release 
+  apt: pkg=glusterfs-server state=present
+
+- name: Storage | Start glusterfs-server
+  service: name=glusterfs-server state=started

@@ -54,6 +54,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  def add_storage(machine_name, machine)
+    storage_root = '/Volumes/LaCie/storage'
+    file_to_disk = File.join(storage_root, "data-#{machine_name}.vdi")
+    machine.vm.provider :virtualbox do |vb|
+      vb.customize ['createhd', '--filename', file_to_disk, '--size', 500 * 1024]
+      vb.customize ['storageattach', :id, 
+                    '--storagectl', 'SATA Controller', 
+                    '--port', 1, 
+                    '--device', 0, 
+                    '--type', 'hdd', 
+                    '--medium', file_to_disk]
+    end
+  end
+
   # We use a dummy playbook because (a) we want the ansible provisioner
   # to build an inventory but (b) we want to save the actual provisioning
   # until later so ansible can wire together systems effectively. See the
@@ -63,6 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   if ENABLE_MASTER
     config.vm.define "master" do |master|
       configure_virtualbox("master", master)
+      add_storage("master", master)
 
       master.vm.provision "ansible" do |ansible|
         ansible.playbook = "dummy-playbook.yml"
@@ -93,6 +108,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       config.vm.define vm_name do |pipeline|
         configure_virtualbox(vm_name, pipeline)
+        add_storage(vm_name, pipeline)
 
         pipeline.vm.provision "ansible" do |ansible|
           ansible.playbook = "dummy-playbook.yml"

@@ -1,0 +1,23 @@
+---
+# file: roles/storage/tasks/create.yml
+# These tasks are run only on the master node, and therefore once
+- name: Storage | Probe workers
+  command: gluster peer probe {{ item }}
+  with_items: groups['grid-worker']
+
+- name: Storage | Get status
+  command: gluster peer status
+  register: gluster_status
+
+- name: Storage | Get volume status
+  command: gluster volume info
+  register: gluster_volume_info
+
+- name: Storage | Create volume
+  command: gluster volume create gv0 {% for x in groups['grid-master'] %} {{ x }}:/data/brick1/gv0 {% endfor %} {% for x in groups['grid-worker'] %} {{ x }}:/data/brick1/gv0 {% endfor %}
+  when: gluster_volume_info.stdout.find('gv0') == -1
+
+- name: Storage | Start volume
+  command: gluster volume start gv0
+  when: 'not "Status: Started" in gluster_volume_info.stdout_lines'
+
