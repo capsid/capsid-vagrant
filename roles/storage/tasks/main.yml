@@ -11,6 +11,7 @@
 - name: Storage | Check disk label
   command: parted /dev/sdb print
   register: parted_table
+  ignore_errors: yes
 
 - name: Storage | Apply disk label
   command: parted --script --align optimal /dev/sdb mklabel msdos
