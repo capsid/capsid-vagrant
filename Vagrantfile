@@ -7,6 +7,8 @@ WORKER_VM_COUNT = 1
 
 DATABASE_VM_COUNT = 1
 
+STORAGE_ROOT = '/Volumes/LaCie/storage'
+
 ENABLE_MASTER = true
 ENABLE_WEBSERVER = false
 ENABLE_DATABASE = false
@@ -55,8 +57,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   def add_storage(machine_name, machine)
-    storage_root = '/Volumes/LaCie/storage'
-    file_to_disk = File.join(storage_root, "data-#{machine_name}.vdi")
+    file_to_disk = File.join(STORAGE_ROOT, "data-#{machine_name}.vdi")
     machine.vm.provider :virtualbox do |vb|
       vb.customize ['createhd', '--filename', file_to_disk, '--size', 500 * 1024]
       vb.customize ['storageattach', :id, 
