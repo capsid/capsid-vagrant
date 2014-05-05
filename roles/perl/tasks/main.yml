@@ -1,0 +1,22 @@
+---
+# Perl stuff -- use the buildin for ease. Might want to switch to a perlbrew for stability
+# at some stage. This is perl5-14.2.
+
+# We need make and its friends, and we need the development headers and library for libxml2
+- name: Perl | Install development tools
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - 'build-essential'
+    - 'libxml2-dev'
+    - 'libexpat1-dev'
+
+# cpan is our preferred build tool, as we don't need to configure too much
+- name: Perl | Install App::cpanminus
+  shell: wget -O - http://cpanmin.us | perl - --self-upgrade creates=/usr/local/bin/cpanm
+
+# And then our modules
+- name: Perl | Install required modules
+  shell: cpanm install {{item}}
+  with_items: 
+    - 'XML::LibXML'
+    - 'XML::DOM'
