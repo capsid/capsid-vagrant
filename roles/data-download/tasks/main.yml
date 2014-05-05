@@ -21,10 +21,21 @@
   async: 7200
   poll: 60
 
+- name: Data download | Getting downloaded nr*.tar.gz files
+  shell: ls /mnt/data/blast/nr*.tar.gz
+  register: data_download_blast_nr_files
+
 - name: Data download | Uncompressing Blast database files
-  unarchive: src={{ item }} dest=/mnt/data/blast/ copy=no
-  with_fileglob:
-    - /mnt/data/blast/*
+  shell: tar xfz {{ item }} chdir=/mnt/data/blast creates={{ item |replace(".tar.gz", ".phi") }}
+  with_items: data_download_blast_nr_files.stdout_lines
+
+- name: Data download | Getting downloaded nt*.tar.gz files
+  shell: ls /mnt/data/blast/nt*.tar.gz
+  register: data_download_blast_nt_files
+
+- name: Data download | Uncompressing Blast database files
+  shell: tar xfz {{ item }} chdir=/mnt/data/blast creates={{ item |replace(".tar.gz", ".nhi") }}
+  with_items: data_download_blast_nt_files.stdout_lines
 
 # We also need the GeneTorrent packages. We use gdebi to install them, as we 
 # don't want the hassle of handling dependencies
