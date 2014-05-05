@@ -1,11 +1,12 @@
 ---
 # CaPSID pipeline
 - name: CaPSID pipeline | Install development tools
-  apt: pkg=build-essential state=present update_cache=yes cache_valid_time=3600
-
-- name: CaPSID pipeline | Install python
-  apt: pkg=python2.7 state=present update_cache=yes cache_valid_time=3600
-  apt: pkg=python2.7-dev state=present update_cache=yes cache_valid_time=3600
+  apt: pkg={{ item.package }} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - { package: 'build-essential' }
+    - { package: 'python2.7' }
+    - { package: 'python2.7-dev' }
+    - { package: 'git' }
 
 - name: CaPSID pipeline | Get pip
   get_url:
@@ -14,9 +15,6 @@
 
 - name: CaPSID pipeline | Install pip
   shell: python2.7 /tmp/get-pip.py creates=/usr/local/bin/pip
-
-- name: CaPSID pipeline | Install git
-  apt: pkg=git state=present update_cache=yes cache_valid_time=3600
 
 - name: CaPSID pipeline | Create /var/local
   shell: mkdir -p /var/local creates=/var/local

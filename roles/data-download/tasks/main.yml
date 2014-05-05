@@ -1,10 +1,11 @@
 ---
 # roles/data-download/tasks/main.yml
 
-- name: Data download | Install packaging tools
+- name: Data download | Install required tools
   apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
   with_items: 
     - 'gdebi-core'
+    - 'git'
 
 - name: Data download | Make data directory
   shell: mkdir -p {{item}} creates={{item}}
@@ -53,3 +54,8 @@
   with_items:
     - { file: 'genetorrent-common_3.8.5a-ubuntu2.94-12.04_amd64.deb', base: 'https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.5a/', creates: '/usr/bin/cgquery' }
     - { file: 'genetorrent-download_3.8.5a-ubuntu2.94-12.04_amd64.deb', base: 'https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.5a/', creates: '/usr/bin/gtdownload' }
+
+- name: Data download | Get download scripts
+  git: 
+    repo: git@github.com:capsid/pancan.git
+    dest: /var/local
