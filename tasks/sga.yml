@@ -1,0 +1,53 @@
+---
+- name: SGA | Installing required dependencies
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items: 
+    - 'build-essentials'
+    - 'python2.7'
+    - 'python2.7-dev'
+    - 'zlib1g-dev'
+    - 'libjemalloc-dev'
+    - 'git'
+    - 'cmake'
+
+- name: SGA | Download sparsehash
+  get_url:
+    dest: '/tmp/sparsehash-2.0.2.tar.gz'
+    url: 'https://sparsehash.googlecode.com/files/sparsehash-2.0.2.tar.gz'
+
+- name: SGA | Download sparsehash
+  shell: tar xfz /tmp/sparsehash-2.0.2.tar.gz chdir=/tmp creates=/tmp/sparsehash-2.0.2
+
+- name: SGA | Configure sparsehash
+  shell: /tmp/sparsehash-2.0.2.tar.gz/configure chdir=/tmp/sparsehash-2.0.2 creates=/tmp/sparsehash-2.0.2/Makefile
+
+- name: SGA | Build sparsehash
+  shell: make chdir=/tmp/sparsehash-2.0.2 creates=/tmp/sparsehash-2.0.2/libsparsehash.pc
+
+- name: SGA | Install sparsehash
+  shell: make install chdir=/tmp/sparsehash-2.0.2 creates=/usr/local/include/sparsehash/
+
+- name: SGA | Check out bamtools from Github
+  git:
+    repo: git://github.com/pezmaster31/bamtools.git
+    dest: /var/local/bamtools
+    update: yes
+    version: master
+
+- name: SGA | Create a build directory
+  shell: mkdir -p build chdir=/var/local/bamtools creates=/var/local/bamtools/build
+
+- name: SGA | Build bamtools
+  shell: {{ item.command }} chdir={{item.directory }}
+  with_items: 
+    - { command: "cmake ..", directory: "/var/local/bamtools/build", creates: "/var/local/bamtools/build/Makefile" }
+    - { command: "make", directory: "/var/local/bamtools/build", creates: "/var/local/bamtools/bin/bamtools" }
+    - { command: "make install", directory: "/var/local/bamtools/build", creates: "/usr/local/bin/bamtools" }
+
+- name: SGA | Check out SGA from Github
+  git:
+    repo: https://github.com/jts/sga.git
+    dest: /var/local/sga
+    update: yes
+    version: master
+
