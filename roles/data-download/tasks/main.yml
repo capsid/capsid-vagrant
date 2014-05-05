@@ -1,14 +1,44 @@
 ---
 # roles/data-download/tasks/main.yml
 
+- name: Data download | Install packaging tools
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items: 
+    - 'gdebi-core'
+
 - name: Data download | Make data directory
   shell: mkdir -p {{item}} creates={{item}}
   with_items:
-    '/var/local/data'
-    '/var/local/data/blast'
+    - '/mnt/data'
+    - '/mnt/data/blast'
 
 # Downloading the Blast database, which is likely split into multiple files
-# We want both the original files and digests, just in case
-- name: Data download | Downloading Blast database
-  shell: rsync -av "ftp.ncbi.nlm.nih.gov::blast/db/refseq_rna.*.tar.gz*" /var/local/data/blast/
+# We want both the original files and digests, just in case.
+# Note that we use rsync instead of ftp, because we're not crazy
 
+- name: Data download | Downloading Blast database
+  shell: rsync -av --contimeout=300 ftp.ncbi.nlm.nih.gov::blast/db/n[tr].*.tar.gz* /mnt/data/blast/
+  async: 7200
+  poll: 60
+
+- name: Data download | Uncompressing Blast database files
+  unarchive: src={{ item }} dest=/mnt/data/blast/ copy=no
+  with_fileglob:
+    - /mnt/data/blast/*
+
+# We also need the GeneTorrent packages. We use gdebi to install them, as we 
+# don't want the hassle of handling dependencies
+
+- name: Data download | Downloading GeneTorrent packages
+  get_url:
+    dest: "/tmp/{{ item.file }}"
+    url: "{{ item.base }}{{ item.file}}"
+  with_items:
+    - { file: 'genetorrent-common_3.8.5a-ubuntu2.94-12.04_amd64.deb', base: 'https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.5a/' }
+    - { file: 'genetorrent-download_3.8.5a-ubuntu2.94-12.04_amd64.deb', base: 'https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.5a/' }
+
+- name: Data download | Installing GeneTorrent packages
+  shell: gdebi -n '/tmp/{{ item.file }}'' creates={{ item.creates }}
+  with_items:
+    - { file: 'genetorrent-common_3.8.5a-ubuntu2.94-12.04_amd64.deb', base: 'https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.5a/', creates: '/usr/bin/cgquery' }
+    - { file: 'genetorrent-download_3.8.5a-ubuntu2.94-12.04_amd64.deb', base: 'https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.5a/', creates: '/usr/bin/gtdownload' }

@@ -1,0 +1,10 @@
+---
+# file: blast.yml
+
+# Use this to download the Blast database
+# e.g., ansible-playbook -v -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory --private-key=~/.vagrant.d/insecure_private_key -u vagrant blast.yml
+
+- hosts: grid-master 
+  sudo: True
+  roles:
+    - { role: data-download }
