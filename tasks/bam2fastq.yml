@@ -1,0 +1,22 @@
+---
+# Ansible tasks required to install bam2fastq. 
+- name: bam2fastq | Installing required dependencies
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items: 
+    - 'build-essential'
+    - 'automake'
+
+- name: bam2fastq | Download bam2fastq
+  get_url:
+    dest: '/var/local/bam2fastq-1.1.0.tgz'
+    url: 'http://www.hudsonalpha.org/gsl/static/software/bam2fastq-1.1.0.tgz'
+
+
+- name: bam2fastq | Uncompress bam2fastq
+  shell: tar xfz /var/local/bam2fastq-1.1.0.tgz chdir=/var/local creates=/var/local/bam2fastq-1.1.0
+
+- name: bam2fastq | Build bam2fastq
+  shell: make chdir=/var/local/bam2fastq-1.1.0 creates=/var/local/bam2fastq-1.1.0/bam2fastq
+
+- name: bam2fastq | Install bam2fastq
+  shell: cp /var/local/bam2fastq-1.1.0/bam2fastq /usr/local/bin/bam2fastq creates=/usr/local/bin/bam2fastq
