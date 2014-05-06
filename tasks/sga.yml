@@ -1,14 +1,19 @@
 ---
+
+# Ansible tasks required to install Jared Simpson's SGA aligner. This is taken from
+# Github and installed more or less as indicated through the README.md file. 
+
 - name: SGA | Installing required dependencies
   apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
   with_items: 
-    - 'build-essentials'
+    - 'build-essential'
     - 'python2.7'
     - 'python2.7-dev'
     - 'zlib1g-dev'
     - 'libjemalloc-dev'
     - 'git'
     - 'cmake'
+    - 'automake'
 
 - name: SGA | Download sparsehash
   get_url:
@@ -38,11 +43,25 @@
   shell: mkdir -p build chdir=/var/local/bamtools creates=/var/local/bamtools/build
 
 - name: SGA | Build bamtools
-  shell: {{ item.command }} chdir={{item.directory }}
+  shell: "{{item.command}} chdir={{item.directory}} creates={{item.creates}}"
   with_items: 
     - { command: "cmake ..", directory: "/var/local/bamtools/build", creates: "/var/local/bamtools/build/Makefile" }
     - { command: "make", directory: "/var/local/bamtools/build", creates: "/var/local/bamtools/bin/bamtools" }
     - { command: "make install", directory: "/var/local/bamtools/build", creates: "/usr/local/bin/bamtools" }
+
+- name: SGA | Get pip
+  get_url:
+    dest: '/tmp/get-pip.py'
+    url: 'https://raw.github.com/pypa/pip/master/contrib/get-pip.py'
+
+- name: SGA | Install pip
+  shell: python2.7 /tmp/get-pip.py creates=/usr/local/bin/pip
+
+- name: SGA | Install python modules
+  shell: pip install "{{item.module}} creates={{item.creates}}
+  with_items: 
+    - { module: "pysam", creates: "/usr/local/lib/python2.7/dist-packages/pysam" }
+    - { module: "ruffus", creates: "/usr/local/lib/python2.7/dist-packages/ruffus" }
 
 - name: SGA | Check out SGA from Github
   git:
@@ -50,4 +69,16 @@
     dest: /var/local/sga
     update: yes
     version: master
+
+- name: SGA | Prepare to configure SGA
+  shell: ./autogen.sh chdir=/var/local/sga/src creates=/var/local/sga/src/configure
+
+- name: SGA | Configure SGA
+  shell: ./configure --with-bamtools=/var/local/bamtools chdir=/var/local/sga/src creates=/var/local/sga/src/config.h
+
+- name: SGA | Build SGA
+  shell: make chdir=/var/local/sga/src creates=/var/local/sga/bin/sga-align
+
+- name: SGA | Install SGA
+  shell: make install chdir=/var/local/sga/src creates=/usr/local/bin/sga
 
