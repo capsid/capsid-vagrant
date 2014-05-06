@@ -1,0 +1,26 @@
+---
+# Ansible tasks required to install blat. 
+- name: blat | Installing required dependencies
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items: 
+    - 'build-essential'
+    - 'automake'
+    - 'unzip'
+    - 'libpng-dev'
+
+- name: blat | Download blat
+  get_url:
+    dest: '/var/local/blatSrc.zip'
+    url: 'http://users.soe.ucsc.edu/~kent/src/blatSrc.zip'
+
+- name: blat | Uncompress blat
+  shell: unzip blatSrc.zip chdir=/var/local creates=/var/local/blatSrc
+
+# Note the MACHTYPE fiddle here. This is not especially clearly documented, yet
+# is responsible for 95% of blat issues. Here, even though uname -m is different to
+# the (shell) version of MACHTYPE, we don't get the shell version of of MACHTYPE
+# through Ansible. This is, therefore, a better technique. 
+
+- name: blat | Build and install blat
+  shell: env BINDIR=/usr/local/bin MACHTYPE=`uname -m` make chdir=/var/local/blatSrc creates=/usr/local/bin/blat
+
