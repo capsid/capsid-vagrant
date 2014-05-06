@@ -1,0 +1,45 @@
+---
+
+# Ansible tasks required to install perl 5.18.2. This is not implanted into the
+# PATH for everything, although it probably should be. Users of Perl need to be
+# careful about what we use. 
+
+- name: Perl | Installing required dependencies
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items: 
+    - 'build-essential'
+    - 'libxml2-dev'
+    - 'libexpat1-dev'
+
+- name: Perl | Preparing vendor build
+  file: 
+    path: "{{ vendor_build }}"
+    state: directory
+
+- name: Perl | Download Perl
+  get_url:
+    dest: '{{ vendor_build }}/perl-5.18.2.tar.gz'
+    url: 'http://www.cpan.org/src/5.0/perl-5.18.2.tar.gz'
+
+- name: Perl | Unpack Perl
+  shell: tar xfz {{ vendor_build }}/perl-5.18.2.tar.gz chdir={{ vendor_build }} creates={{ vendor_build }}/perl-5.18.2
+
+- name: Perl | Configure Perl
+  shell: ./Configure -des -Dprefix={{ vendor_base }} chdir={{ vendor_build }}/perl-5.18.2 creates={{ vendor_build }}/perl-5.18.2/Makefile
+
+- name: Perl | Build Perl
+  shell: make chdir={{ vendor_build }}/perl-5.18.2 creates={{ vendor_build }}/perl-5.18.2/perl
+
+- name: Perl | Install Perl
+  shell: make install chdir={{ vendor_build }}/perl-5.18.2 creates={{ vendor_base }}/bin/perl
+
+# cpan is our preferred build tool, as we don't need to configure too much
+- name: Perl | Install App::cpanminus
+  shell: wget -O - http://cpanmin.us | {{ vendor_base }}/bin/perl - --self-upgrade creates={{ vendor_base }}/bin/cpanm
+
+# And then our modules
+- name: Perl | Install required modules
+  shell: "{{ vendor_base }}/bin/cpanm install {{item}}"
+  with_items: 
+    - 'XML::LibXML'
+    - 'XML::DOM'
