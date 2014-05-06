@@ -7,8 +7,6 @@
   apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
   with_items: 
     - 'build-essential'
-    - 'python2.7'
-    - 'python2.7-dev'
     - 'zlib1g-dev'
     - 'libjemalloc-dev'
     - 'git'
@@ -17,68 +15,60 @@
 
 - name: SGA | Download sparsehash
   get_url:
-    dest: '/tmp/sparsehash-2.0.2.tar.gz'
+    dest: '{{ vendor_build }}/sparsehash-2.0.2.tar.gz'
     url: 'https://sparsehash.googlecode.com/files/sparsehash-2.0.2.tar.gz'
 
-- name: SGA | Download sparsehash
-  shell: tar xfz /tmp/sparsehash-2.0.2.tar.gz chdir=/tmp creates=/tmp/sparsehash-2.0.2
+- name: SGA | Uncompress sparsehash
+  shell: tar xfz {{ vendor_build }}/sparsehash-2.0.2.tar.gz chdir={{ vendor_build }} creates={{ vendor_build }}/sparsehash-2.0.2
 
 - name: SGA | Configure sparsehash
-  shell: /tmp/sparsehash-2.0.2.tar.gz/configure chdir=/tmp/sparsehash-2.0.2 creates=/tmp/sparsehash-2.0.2/Makefile
+  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/sparsehash-2.0.2 creates={{ vendor_build }}/sparsehash-2.0.2/Makefile
 
 - name: SGA | Build sparsehash
-  shell: make chdir=/tmp/sparsehash-2.0.2 creates=/tmp/sparsehash-2.0.2/libsparsehash.pc
+  shell: make chdir={{ vendor_build }}/sparsehash-2.0.2 creates={{ vendor_build }}/sparsehash-2.0.2/libsparsehash.pc
 
 - name: SGA | Install sparsehash
-  shell: make install chdir=/tmp/sparsehash-2.0.2 creates=/usr/local/include/sparsehash/
+  shell: make install chdir={{ vendor_build }}/sparsehash-2.0.2 creates={{ vendor_base }}/include/sparsehash
 
 - name: SGA | Check out bamtools from Github
   git:
     repo: git://github.com/pezmaster31/bamtools.git
-    dest: /var/local/bamtools
+    dest: "{{ vendor_build }}/bamtools"
     update: yes
     version: master
 
 - name: SGA | Create a build directory
-  shell: mkdir -p build chdir=/var/local/bamtools creates=/var/local/bamtools/build
+  shell: mkdir -p build chdir={{ vendor_build }}/bamtools creates={{ vendor_build }}/bamtools/build
 
 - name: SGA | Build bamtools
   shell: "{{item.command}} chdir={{item.directory}} creates={{item.creates}}"
   with_items: 
-    - { command: "cmake ..", directory: "/var/local/bamtools/build", creates: "/var/local/bamtools/build/Makefile" }
-    - { command: "make", directory: "/var/local/bamtools/build", creates: "/var/local/bamtools/bin/bamtools" }
-    - { command: "make install", directory: "/var/local/bamtools/build", creates: "/usr/local/bin/bamtools" }
-
-- name: SGA | Get pip
-  get_url:
-    dest: '/tmp/get-pip.py'
-    url: 'https://raw.github.com/pypa/pip/master/contrib/get-pip.py'
-
-- name: SGA | Install pip
-  shell: python2.7 /tmp/get-pip.py creates=/usr/local/bin/pip
+    - { command: "cmake ..", directory: "{{ vendor_build }}/bamtools/build", creates: "{{ vendor_build }}/bamtools/build/Makefile" }
+    - { command: "make", directory: "{{ vendor_build }}/bamtools/build", creates: "{{ vendor_build }}/bamtools/bin/bamtools" }
+    - { command: "make install", directory: "{{ vendor_build }}/bamtools/build", creates: "{{ vendor_base }}/bin/bamtools" }
 
 - name: SGA | Install python modules
-  shell: pip install "{{item.module}} creates={{item.creates}}
+  shell: "{{ vendor_base }}/bin/pip install {{item.module}} creates={{item.creates}}"
   with_items: 
-    - { module: "pysam", creates: "/usr/local/lib/python2.7/dist-packages/pysam" }
-    - { module: "ruffus", creates: "/usr/local/lib/python2.7/dist-packages/ruffus" }
+    - { module: "pysam", creates: "{{ vendor_base }}/lib/python2.7/site-packages/pysam" }
+    - { module: "ruffus", creates: "{{ vendor_base }}/lib/python2.7/site-packages/ruffus" }
 
 - name: SGA | Check out SGA from Github
   git:
     repo: https://github.com/jts/sga.git
-    dest: /var/local/sga
+    dest: "{{ vendor_build }}/sga"
     update: yes
     version: master
 
 - name: SGA | Prepare to configure SGA
-  shell: ./autogen.sh chdir=/var/local/sga/src creates=/var/local/sga/src/configure
+  shell: ./autogen.sh chdir={{ vendor_build }}/sga/src creates={{ vendor_build }}/sga/src/configure
 
 - name: SGA | Configure SGA
-  shell: ./configure --with-bamtools=/var/local/bamtools chdir=/var/local/sga/src creates=/var/local/sga/src/config.h
+  shell: ./configure --prefix={{ vendor_base }} --with-bamtools={{ vendor_build }}/bamtools chdir={{ vendor_build }}/sga/src creates={{ vendor_build }}/sga/src/config.h
 
 - name: SGA | Build SGA
-  shell: make chdir=/var/local/sga/src creates=/var/local/sga/bin/sga-align
+  shell: make chdir={{ vendor_build }}/sga/src creates={{ vendor_build }}/sga/bin/sga-align
 
 - name: SGA | Install SGA
-  shell: make install chdir=/var/local/sga/src creates=/usr/local/bin/sga
+  shell: make install chdir={{ vendor_build }}/sga/src creates={{ vendor_base }}/bin/sga
 
