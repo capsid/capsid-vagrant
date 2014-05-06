@@ -1,0 +1,34 @@
+---
+
+# Ansible tasks required to install Jared Simpson's SGA aligner. This is taken from
+# Github and installed more or less as indicated through the README.md file. 
+
+- name: IDBA UD | Installing required dependencies
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items: 
+    - 'build-essential'
+
+- name: IDBA UD | Preparing vendor build
+  file: 
+    path: "{{ vendor_build }}"
+    state: directory
+
+- name: IDBA UD | Download IDBA UD
+  get_url:
+    dest: '{{ vendor_build }}/idba_ud-1.0.9.tar.gz'
+    url: 'https://hku-idba.googlecode.com/files/idba_ud-1.0.9.tar.gz'
+
+- name: IDBA UD | Unpack IDBA UD
+  shell: tar xfz {{ vendor_build }}/idba_ud-1.0.9.tar.gz chdir={{ vendor_build }} creates={{ vendor_build }}/idba_ud-1.0.9
+
+- name: IDBA UD | Configure IDBA UD
+  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/idba_ud-1.0.9 creates={{ vendor_build }}/idba_ud-1.0.9/config.h
+
+- name: IDBA UD | Build IDBA UD
+  shell: make chdir={{ vendor_build }}/idba_ud-1.0.9 creates={{ vendor_build }}/idba_ud-1.0.9/bin/idba_ud
+
+- name: IDBA UD | Install IDBA
+  shell: make install chdir={{ vendor_build }}/idba_ud-1.0.9 creates={{ vendor_build }}/idba_ud-1.0.9/bin/idba
+
+- name: IDBA UD | Copy IDBA UD because it isn't installed
+  shell: cp {{ vendor_build }}/idba_ud-1.0.9/bin/idba_ud {{ vendor_base }}/bin/idba_ud creates={{ vendor_base }}/bin/idba_ud
