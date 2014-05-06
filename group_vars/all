@@ -1,0 +1,6 @@
+---
+# file: group_vars/all
+
+vendor_base: "/mnt/ibc"
+
+vendor_build: "/mnt/build"
