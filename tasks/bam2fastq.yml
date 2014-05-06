@@ -11,7 +11,6 @@
     dest: '/var/local/bam2fastq-1.1.0.tgz'
     url: 'http://www.hudsonalpha.org/gsl/static/software/bam2fastq-1.1.0.tgz'
 
-
 - name: bam2fastq | Uncompress bam2fastq
   shell: tar xfz /var/local/bam2fastq-1.1.0.tgz chdir=/var/local creates=/var/local/bam2fastq-1.1.0
 
