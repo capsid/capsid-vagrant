@@ -1,0 +1,41 @@
+---
+
+# Ansible tasks required to install Python 2.7. This is not implanted into the
+# PATH for everything, although it probably should be. Users of Python need to be
+# careful about what we use. 
+
+- name: Python 2.7 | Installing required dependencies
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items: 
+    - 'build-essential'
+    - 'libsqlite3-dev'
+
+- name: Python 2.7 | Preparing vendor build
+  file: 
+    path: "{{ vendor_build }}"
+    state: directory
+
+- name: Python 2.7 | Download Python 2.7
+  get_url:
+    dest: '{{ vendor_build }}/Python-2.7.6.tgz'
+    url: 'https://www.python.org/ftp/python/2.7.6/Python-2.7.6.tgz'
+
+- name: Python 2.7 | Unpack Python 2.7
+  shell: tar xfz {{ vendor_build }}/Python-2.7.6.tgz chdir={{ vendor_build }} creates={{ vendor_build }}/Python-2.7.6
+
+- name: Python 2.7 | Configure Python 2.7
+  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/Python-2.7.6 creates={{ vendor_build }}/Python-2.7.6/Makefile
+
+- name: Python 2.7 | Build Python 2.7
+  shell: make chdir={{ vendor_build }}/Python-2.7.6 creates={{ vendor_build }}/Python-2.7.6/python
+
+- name: Python 2.7 | Install Python 2.7
+  shell: make install chdir={{ vendor_build }}/Python-2.7.6 creates={{ vendor_base }}/bin/python
+
+- name: Python 2.7 | Get pip
+  get_url:
+    dest: '{{ vendor_build }}/get-pip.py'
+    url: 'https://raw.github.com/pypa/pip/master/contrib/get-pip.py'
+
+- name: Python 2.7 | Install pip
+  shell: "{{ vendor_base }}/bin/python {{ vendor_build }}/get-pip.py creates={{ vendor_base }}/bin/pip"
