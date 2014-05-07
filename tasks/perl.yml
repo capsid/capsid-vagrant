@@ -43,3 +43,4 @@
   with_items: 
     - 'XML::LibXML'
     - 'XML::DOM'
+    - 'String::Util'
