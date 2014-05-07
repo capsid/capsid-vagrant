@@ -41,8 +41,3 @@
 # Add in R
 
 - include: r.yml
-
-# Add in the aligners. We install all of them on all systems, just in case, as it
-# isn't too much work. 
-
-- include: aligners.yml
