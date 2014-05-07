@@ -1,0 +1,10 @@
+- name: bowtie2 | Get bowtie2
+  get_url:
+    dest: '{{ vendor_build }}/bowtie2-2.2.2-linux-x86_64.zip'
+    url: 'http://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.2.2/bowtie2-2.2.2-linux-x86_64.zip/download'
+
+- name: bowtie2 | Unpack bowtie2
+  shell: unzip {{ vendor_build }}/bowtie2-2.2.2-linux-x86_64.zip chdir={{ vendor_build }} creates={{ vendor_build }}/bowtie2-2.2.2
+
+- name: bowtie2 | Copy bowtie2 binaries
+  shell: "find {{ vendor_build }}/bowtie2-2.2.2 -maxdepth 1 -executable -type f -exec cp '{}' {{ vendor_base }}/bin \\; chdir={{ vendor_build }} creates={{ vendor_base }}/bin/bowtie2"
