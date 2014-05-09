@@ -1,0 +1,5 @@
+- hosts: grid-master 
+  sudo: True
+  roles: 
+    - { role: capsid }
+

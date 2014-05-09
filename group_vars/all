@@ -4,3 +4,9 @@
 vendor_base: "/mnt/ibc"
 
 vendor_build: "/mnt/build"
+
+vendor_data: "/mnt/data"
+
+vendor_source: "/mnt/source"
+
+vendor_scratch: "/mnt/scratch"

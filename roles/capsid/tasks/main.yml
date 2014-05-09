@@ -1,0 +1,32 @@
+---
+
+# Ansible tasks required to install CaPSID.
+
+- name: CaPSID | Copy private key
+  copy:
+    src: secure/pancan.key
+    dest: /etc/ssh/pancan.key
+
+- name: CaPSID | Ensure ~/.ssh exists
+  shell: mkdir -p ~/.ssh
+
+- name: CaPSID | Add the bitbuckey hostkey
+  shell: ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+
+- name: CaPSID | Get scripts
+  git: 
+    repo: git@bitbucket.org:iborozan/pancan.git
+    dest: "{{ vendor_base }}/pancan"
+    key_file: /etc/ssh/pancan.key
+
+- name: CaPSID | Ensure directories exist
+  shell: mkdir -p {{ item }}
+  with_items:
+    - "{{ vendor_data }}/indexes"
+    - "{{ vendor_scratch }}"
+    - "{{ vendor_source }}"
+
+# - name: CaPSID | Download reference indexes
+#   copy: 
+#     src: /Volumes/LaCie/data/indexes
+#     dest: "{{ vendor_data }}/"
