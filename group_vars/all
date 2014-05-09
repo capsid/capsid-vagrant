@@ -10,3 +10,5 @@ vendor_data: "/mnt/data"
 vendor_source: "/mnt/source"
 
 vendor_scratch: "/mnt/scratch"
+
+vendor_log: "/mnt/log"

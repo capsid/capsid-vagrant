@@ -25,6 +25,7 @@
     - "{{ vendor_data }}/indexes"
     - "{{ vendor_scratch }}"
     - "{{ vendor_source }}"
+    - "{{ vendor_log }}"
 
 # - name: CaPSID | Download reference indexes
 #   copy: 
