@@ -30,5 +30,8 @@
 - name: IDBA UD | Install IDBA
   shell: make install chdir={{ vendor_build }}/idba_ud-1.0.9 creates={{ vendor_build }}/idba_ud-1.0.9/bin/idba
 
-- name: IDBA UD | Copy IDBA UD because it isn't installed
-  shell: cp {{ vendor_build }}/idba_ud-1.0.9/bin/idba_ud {{ vendor_base }}/bin/idba_ud creates={{ vendor_base }}/bin/idba_ud
+- name: IDBA UD | Copy IDBA UD programs because they aren't installed
+  shell: cp {{ vendor_build }}/idba_ud-1.0.9/bin/{{ item }} {{ vendor_base }}/bin/{{ item }} creates={{ vendor_base }}/bin/{{ item }}
+  with_items:
+    - "idba_ud"
+    - "fq2fa"
