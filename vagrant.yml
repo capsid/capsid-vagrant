@@ -1,0 +1,14 @@
+---
+
+enable_components:
+  master: True
+  webserver: True
+  database: True
+  workers: True
+
+storage_root: '/Volumes/LaCie/storage'
+
+component_counts:
+  workers: 1
+  database: 1
+
