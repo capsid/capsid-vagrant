@@ -11,27 +11,33 @@
 
 require 'yaml'
 
-config_settings = YAML.load_file('vagrant.yml')
-if File.file?('local.yml')
+$VAGRANT_CONFIG = YAML.load_file('vagrant.yml')
+if File.file?('vagrant_local.yml')
   user_settings = YAML.load_file('vagrant_local.yml')
 else 
   user_settings = {}
 end 
-config_settings.merge!(user_settings)
+$VAGRANT_CONFIG.merge!(user_settings)
+
+# require 'json'
+# puts JSON.dump($VAGRANT_CONFIG)
+
+# Now do the bulk of the configuration for Vagrant. This is a Ruby-driven multi-machine
+# setup. 
 
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  worker_vm_count = config_settings['component_counts']['workers']
-  database_vm_count = config_settings['component_counts']['database']
+  worker_vm_count = $VAGRANT_CONFIG['component_counts']['workers']
+  database_vm_count = $VAGRANT_CONFIG['component_counts']['database']
 
-  enable_master = config_settings['enable_components']['master']
-  enable_webserver = config_settings['enable_components']['webserver']
-  enable_workers = config_settings['enable_components']['workers']
-  enable_database = config_settings['enable_components']['database']
+  enable_master = $VAGRANT_CONFIG['enable_components']['master']
+  enable_webserver = $VAGRANT_CONFIG['enable_components']['webserver']
+  enable_workers = $VAGRANT_CONFIG['enable_components']['workers']
+  enable_database = $VAGRANT_CONFIG['enable_components']['database']
 
-  @storage_root = config_settings['storage_root']
+  @storage_root = $VAGRANT_CONFIG['storage_root']
 
   @ansible_groups = {
     "grid-master" => ["master"],
@@ -76,6 +82,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # For VirtualBox, and only for VirtualBox, override private networking to use our specified address
       override.vm.network "private_network", virtualbox__intnet: true, ip: @ansible_ip_addresses[machine_name]
     end
+
+    machine.vm.provider :aws do |aws, override|
+      override.vm.box = "dummy"
+
+      aws.access_key_id = $VAGRANT_CONFIG['provider']['aws']['access_key_id']
+      aws.secret_access_key = $VAGRANT_CONFIG['provider']['aws']['secret_access_key']
+      aws.keypair_name = $VAGRANT_CONFIG['provider']['aws']['keypair_name']
+      aws.ami = $VAGRANT_CONFIG['provider']['aws']['ami']
+      aws.region = $VAGRANT_CONFIG['provider']['aws']['region']
+
+      override.vm.network "private_network", type: "dhcp"
+    end
   end
 
   def add_storage(machine_name, machine)
@@ -91,6 +109,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  # We use a dummy playbook because (a) we want the ansible provisioner
+  # to build an inventory but (b) we want to save the actual provisioning
+  # until later so ansible can wire together systems effectively. See the
+  # issue at: https://github.com/mitchellh/vagrant/issues/1784
+  # There is no realworkaround on this yet. 
+
   def configure_ansible(machine_name, machine)
     machine.vm.provision "ansible" do |ansible|
       ansible.playbook = "dummy-playbook.yml"
@@ -99,12 +123,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
-  # We use a dummy playbook because (a) we want the ansible provisioner
-  # to build an inventory but (b) we want to save the actual provisioning
-  # until later so ansible can wire together systems effectively. See the
-  # issue at: https://github.com/mitchellh/vagrant/issues/1784
-  # There is no realworkaround on this yet. 
-
+  # Set up the master. There can be only one.  
   if enable_master
     config.vm.define "master" do |master|
       configure_virtual_machine("master", master)
@@ -113,6 +132,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  # For the webserver, add an additional port forward, so that we can get through
+  # to the VM on its port 443. This allows us to connect through to the webapp. 
+  # Also note that the webserver doesn't need any storage. 
   if enable_webserver
     config.vm.define "webserver" do |webserver|
       configure_virtual_machine("webserver", webserver)
@@ -121,6 +143,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  # Set up the worker nodes. There could be n of them. 
   if enable_workers
     (1..worker_vm_count).each do |i|
       vm_name = "worker-#{i}"
@@ -133,6 +156,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  # The database should probably also have storage, but it will use it in a very
+  # different way, as it ought to be the backing system. We might well even set a 
+  # sharded database (at some stage) in which case that becomes an additional thing
+  # to worry about. 
   if enable_database
     (1..database_vm_count).each do |i|
       vm_name = "database-#{i}"
