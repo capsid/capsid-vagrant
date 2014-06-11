@@ -9,12 +9,12 @@
     - { package: 'xfsprogs' }
 
 - name: Storage | Check disk label
-  command: parted /dev/sdb print
+  command: parted {{ provisioner_values.storage_device }} print
   register: parted_table
   ignore_errors: yes
 
 - name: Storage | Apply disk label
-  command: parted --script --align optimal /dev/sdb mklabel msdos
+  command: parted --script --align optimal {{ provisioner_values.storage_device }} mklabel msdos
   when: parted_table.stdout.find('msdos') == -1
 
 - name: Storage | Wait for disk label to exist
@@ -22,7 +22,7 @@
   when: parted_table.stdout.find('msdos') == -1
 
 - name: Storage | Create partition
-  command: parted --script --align optimal -- /dev/sdb unit compact mkpart primary xfs "1" "-1"
+  command: parted --script --align optimal -- {{ provisioner_values.storage_device }} unit compact mkpart primary xfs "1" "-1"
   when: parted_table.stdout.find('primary') == -1
 
 - name: Storage | Wait for partition to exist
@@ -30,13 +30,13 @@
   when: parted_table.stdout.find('primary') == -1
 
 - name: Storage | Create file system
-  filesystem: fstype=xfs dev=/dev/sdb1 opts="-i size=512"
+  filesystem: fstype=xfs dev={{ provisioner_values.storage_device }}1 opts="-i size=512"
 
 - name: Storage | Create mount point
   shell: mkdir -p /data/brick1
 
 - name: Storage | Mount the device
-  mount: name=/data/brick1 src=/dev/sdb1 fstype=xfs opts=defaults dump=1 passno=2 state=mounted
+  mount: name=/data/brick1 src={{ provisioner_values.storage_device }}1 fstype=xfs opts=defaults dump=1 passno=2 state=mounted
 
 - name: Storage | Create GlusterFS brick volume
   shell: mkdir -p /data/brick1/gv0

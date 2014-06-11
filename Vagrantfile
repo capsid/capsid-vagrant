@@ -114,9 +114,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   def add_storage(machine_name, machine_role, machine)
     machine.vm.provider :virtualbox do |vb|
 
+      volume_size = $VAGRANT_CONFIG['provider']['virtualbox']['components'][machine_role]['volume_size']
       storage_root = $VAGRANT_CONFIG['provider']['virtualbox']['storage_root']
       file_to_disk = File.join(storage_root, "data-#{machine_name}.vdi")
-      vb.customize ['createhd', '--filename', file_to_disk, '--size', 500 * 1024]
+      vb.customize ['createhd', '--filename', file_to_disk, '--size', volume_size * 1024]
       vb.customize ['storageattach', :id, 
                     '--storagectl', 'SATA Controller', 
                     '--port', 1, 
@@ -124,6 +125,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                     '--type', 'hdd', 
                     '--medium', file_to_disk]
     end
+
+    machine.vm.provider :aws do |aws|
+      volume_size = $VAGRANT_CONFIG['provider']['aws']['components'][machine_role]['volume_size']
+      aws.block_device_mapping = [{
+        'DeviceName' => '/dev/sdf1',
+        'VirtualName' => 'ephemeral0',
+        'Ebs.VolumeSize' => volume_size
+      }]
+    end
+
   end
 
   # We use a dummy playbook because (a) we want the ansible provisioner

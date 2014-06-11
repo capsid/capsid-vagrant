@@ -10,23 +10,34 @@ component_counts:
   workers: 1
   database: 1
 
+# All volume sizes are in gigabytes.
+
 provider:
   virtualbox:
     storage_root: '/Volumes/LaCie/storage'
+
+    components:
+      master: 
+        volume_size: 10
+      worker:
+        volume_size: 10
+
   aws:
     access_key_id: 'xxx'
     secret_access_key: 'xxx'
     keypair_name: 'KEYPAIR NAME'
 
-    ami: 'ami-7747d01e'
+    ami: 'ami-a73264ce'
     region: 'us-east-1'
     name_prefix: 'capsid_'
 
     components:
       master:
         instance_type: 'm1.small'
+        volume_size: 10
       worker:
         instance_type: 'm1.small'
+        volume_size: 10
       webserver:
         instance_type: 'm1.small'
       database: 
