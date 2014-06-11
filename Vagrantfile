@@ -13,7 +13,7 @@ require 'yaml'
 
 config_settings = YAML.load_file('vagrant.yml')
 if File.file?('local.yml')
-  user_settings = YAML.load_file('local.yml')
+  user_settings = YAML.load_file('vagrant_local.yml')
 else 
   user_settings = {}
 end 
