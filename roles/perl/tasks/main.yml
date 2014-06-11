@@ -9,6 +9,7 @@
     - 'build-essential'
     - 'libxml2-dev'
     - 'libexpat1-dev'
+    - 'zlib1g-dev'
 
 # cpan is our preferred build tool, as we don't need to configure too much
 - name: Perl | Install App::cpanminus
@@ -18,5 +19,6 @@
 - name: Perl | Install required modules
   shell: cpanm install {{item}}
   with_items: 
+    - 'ExtUtils::MakeMaker'
     - 'XML::LibXML'
     - 'XML::DOM'
