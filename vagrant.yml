@@ -6,9 +6,28 @@ enable_components:
   database: True
   workers: True
 
-storage_root: '/Volumes/LaCie/storage'
-
 component_counts:
   workers: 1
   database: 1
 
+provider:
+  virtualbox:
+    storage_root: '/Volumes/LaCie/storage'
+  aws:
+    access_key_id: 'xxx'
+    secret_access_key: 'xxx'
+    keypair_name: 'KEYPAIR NAME'
+
+    ami: 'ami-7747d01e'
+
+    region: 'us-east-1'
+
+    components:
+      master:
+        instance_type: 'm1.small'
+      worker:
+        instance_type: 'm1.small'
+      webserver:
+        instance_type: 'm1.small'
+      database: 
+        instance_type: 'm1.small'

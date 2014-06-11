@@ -11,13 +11,23 @@
 
 require 'yaml'
 
+### Shamelessly stolen from http://apidock.com/rails/v3.2.13/Hash/deep_merge%21
+### Required to merge configuration data deeply. 
+def deep_merge!(hash, other_hash)
+  other_hash.each_pair do |k,v|
+    tv = hash[k]
+    hash[k] = tv.is_a?(Hash) && v.is_a?(Hash) ? deep_merge!(tv, v) : v
+  end
+  hash
+end
+
 $VAGRANT_CONFIG = YAML.load_file('vagrant.yml')
 if File.file?('vagrant_local.yml')
   user_settings = YAML.load_file('vagrant_local.yml')
 else 
   user_settings = {}
 end 
-$VAGRANT_CONFIG.merge!(user_settings)
+$VAGRANT_CONFIG = deep_merge!($VAGRANT_CONFIG, user_settings)
 
 # require 'json'
 # puts JSON.dump($VAGRANT_CONFIG)
@@ -36,8 +46,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   enable_webserver = $VAGRANT_CONFIG['enable_components']['webserver']
   enable_workers = $VAGRANT_CONFIG['enable_components']['workers']
   enable_database = $VAGRANT_CONFIG['enable_components']['database']
-
-  @storage_root = $VAGRANT_CONFIG['storage_root']
 
   @ansible_groups = {
     "grid-master" => ["master"],
@@ -101,7 +109,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   def add_storage(machine_name, machine_role, machine)
     machine.vm.provider :virtualbox do |vb|
-      file_to_disk = File.join(@storage_root, "data-#{machine_name}.vdi")
+
+      storage_root = $VAGRANT_CONFIG['provider']['virtualbox']['storage_root']
+      file_to_disk = File.join(storage_root, "data-#{machine_name}.vdi")
       vb.customize ['createhd', '--filename', file_to_disk, '--size', 500 * 1024]
       vb.customize ['storageattach', :id, 
                     '--storagectl', 'SATA Controller', 
