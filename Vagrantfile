@@ -72,7 +72,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Core routine to provide basic configuration of a virtual machine. This is 
   # refactoring convenience, to avoid duplicating stuff everywhere. 
-  def configure_virtual_machine(machine_name, machine) 
+  def configure_virtual_machine(machine_name, machine_role, machine) 
     machine.vm.box = "precise64"
 
     machine.vm.provider :virtualbox do |vb, override|
@@ -92,11 +92,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       aws.ami = $VAGRANT_CONFIG['provider']['aws']['ami']
       aws.region = $VAGRANT_CONFIG['provider']['aws']['region']
 
+      # These settings might need to be configured differently for each system
+      aws.instance_type = $VAGRANT_CONFIG['provider']['aws']['components'][machine_role]['instance_type']
+
       override.vm.network "private_network", type: "dhcp"
     end
   end
 
-  def add_storage(machine_name, machine)
+  def add_storage(machine_name, machine_role, machine)
     machine.vm.provider :virtualbox do |vb|
       file_to_disk = File.join(@storage_root, "data-#{machine_name}.vdi")
       vb.customize ['createhd', '--filename', file_to_disk, '--size', 500 * 1024]
@@ -115,7 +118,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # issue at: https://github.com/mitchellh/vagrant/issues/1784
   # There is no realworkaround on this yet. 
 
-  def configure_ansible(machine_name, machine)
+  def configure_ansible(machine_name, machine_role, machine)
     machine.vm.provision "ansible" do |ansible|
       ansible.playbook = "dummy-playbook.yml"
       ansible.groups = @ansible_groups
@@ -126,9 +129,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Set up the master. There can be only one.  
   if enable_master
     config.vm.define "master" do |master|
-      configure_virtual_machine("master", master)
-      configure_ansible("master", master)
-      add_storage("master", master)
+      configure_virtual_machine("master", "master", master)
+      configure_ansible("master", "master", master)
+      add_storage("master", "master", master)
     end
   end
 
@@ -137,8 +140,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Also note that the webserver doesn't need any storage. 
   if enable_webserver
     config.vm.define "webserver" do |webserver|
-      configure_virtual_machine("webserver", webserver)
-      configure_ansible("webserver", webserver)
+      configure_virtual_machine("webserver", "webserver", webserver)
+      configure_ansible("webserver", "webserver", webserver)
       webserver.vm.network "forwarded_port", guest: 443, host: 8443
     end
   end
@@ -149,9 +152,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       vm_name = "worker-#{i}"
 
       config.vm.define vm_name do |pipeline|
-        configure_virtual_machine(vm_name, pipeline)
-        configure_ansible(vm_name, pipeline)
-        add_storage(vm_name, pipeline)
+        configure_virtual_machine(vm_name, "worker", pipeline)
+        configure_ansible(vm_name, "worker", pipeline)
+        add_storage(vm_name, "worker", pipeline)
       end
     end
   end
@@ -165,8 +168,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       vm_name = "database-#{i}"
 
       config.vm.define vm_name do |database|
-        configure_virtual_machine(vm_name, database)
-        configure_ansible(vm_name, database)
+        configure_virtual_machine(vm_name, "database", database)
+        configure_ansible(vm_name, "database", database)
       end
     end
   end
