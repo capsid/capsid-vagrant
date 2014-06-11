@@ -1,0 +1,3 @@
+---
+provisioner_values:
+  primary_network_interface: "ansible_eth1"

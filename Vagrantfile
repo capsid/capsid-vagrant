@@ -106,6 +106,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       aws.tags = { 'Name' => tagged_name }
 
       override.vm.network "private_network", type: "dhcp"
+      override.ssh.username = $VAGRANT_CONFIG['provider']['aws']['username']
+      override.ssh.private_key_path = $VAGRANT_CONFIG['provider']['aws']['private_key_path']
     end
   end
 

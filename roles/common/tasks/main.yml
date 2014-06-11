@@ -1,14 +1,15 @@
 ---
+
 - name: Generating hosts file
   lineinfile: 
     dest: /etc/hosts 
-    regexp: '^{{ hostvars[item]["ansible_eth1"]["ipv4"]["address"] | replace(".", "\\.") }}' 
-    line: '{{ hostvars[item]["ansible_eth1"]["ipv4"]["address"] }} {{ item }}' 
+    regexp: '^{{ hostvars[item][provisioner_values.primary_network_interface]["ipv4"]["address"] | replace(".", "\\.") }}' 
+    line: '{{ hostvars[item][provisioner_values.primary_network_interface]["ipv4"]["address"] }} {{ item }}' 
     owner: root 
     group: root 
     mode: 0644
   with_items: groups['all_groups']
-  when: hostvars[item]['ansible_eth1'] is defined
+  when: hostvars[item][provisioner_values.primary_network_interface] is defined
 
 - name: Setting hostname to {{ inventory_hostname }}
   hostname: name={{ inventory_hostname }}
