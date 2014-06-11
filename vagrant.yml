@@ -19,8 +19,8 @@ provider:
     keypair_name: 'KEYPAIR NAME'
 
     ami: 'ami-7747d01e'
-
     region: 'us-east-1'
+    name_prefix: 'capsid_'
 
     components:
       master:

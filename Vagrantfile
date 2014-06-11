@@ -102,6 +102,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # These settings might need to be configured differently for each system
       aws.instance_type = $VAGRANT_CONFIG['provider']['aws']['components'][machine_role]['instance_type']
+      tagged_name = $VAGRANT_CONFIG['provider']['aws']['name_prefix'] + machine_name
+      aws.tags = { 'Name' => tagged_name }
 
       override.vm.network "private_network", type: "dhcp"
     end
