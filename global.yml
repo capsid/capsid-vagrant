@@ -59,14 +59,14 @@
     - role: pipeline
     - { role: grid-engine, grid_engine_master: False }
 
-# - hosts: database
-#   sudo: True
-#   roles:
-#     - role: database
+- hosts: database
+  sudo: True
+  roles:
+    - role: database
 
-# - hosts: webapp
-#   sudo: True
-#   roles:
-#     - role: java
-#     - role: webapp
+- hosts: webapp
+  sudo: True
+  roles:
+    - role: java
+    - role: webapp
 
