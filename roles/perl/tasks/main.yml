@@ -17,7 +17,7 @@
 
 # And then our modules
 - name: Perl | Install required modules
-  shell: cpanm install {{item}}
+  command: cpanm install {{item}}
   with_items: 
     - 'ExtUtils::MakeMaker'
     - 'XML::LibXML'
