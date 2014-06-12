@@ -13,3 +13,16 @@
 
 - name: Setting hostname to {{ inventory_hostname }}
   hostname: name={{ inventory_hostname }}
+
+- name: Writing global environment variables
+  lineinfile: dest=/etc/profile.d/vendor.sh regexp='^export {{ item.key|upper }}=' line='export {{ item.key|upper }}={{ item.value }}' state=present create=yes
+  with_dict:
+    vendor_base: "{{ vendor_base }}"
+    vendor_build: "{{ vendor_build }}"
+    vendor_data: "{{ vendor_data }}"
+    vendor_source: "{{ vendor_source }}"
+    vendor_scratch: "{{ vendor_scratch }}"
+    vendor_log: "{{ vendor_scratch }}"
+
+- name: Set permissions for /etc/profile.d/vendor.sh
+  file: dest=/etc/profile.d/vendor.sh mode=0644
