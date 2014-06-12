@@ -27,37 +27,37 @@
   roles:
     - role: common
 
-# - hosts: grid-master:grid-worker
-#   sudo: True
-#   roles:
-#     - role: java
-#     - role: perl
-#     - role: storage
+- hosts: grid-master:grid-worker
+  sudo: True
+  roles:
+    - role: java
+    - role: perl
+    - role: storage
 
-# # Now create the main storage systems on the master
-# - hosts: grid-master
-#   sudo: True
-#   tasks:
-#     - include: roles/storage/tasks/create.yml
+# Now create the main storage systems on the master
+- hosts: grid-master
+  sudo: True
+  tasks:
+    - include: roles/storage/tasks/create.yml
 
-# # Start storage on all nodes
-# - hosts: grid-master:grid-worker
-#   sudo: True
-#   tasks:
-#     - include: roles/storage/tasks/start.yml
+# Start storage on all nodes
+- hosts: grid-master:grid-worker
+  sudo: True
+  tasks:
+    - include: roles/storage/tasks/start.yml
 
-# # The grid master depends on the hosts file, as we need to know at least who we
-# # are by this stage. 
-# - hosts: grid-master 
-#   sudo: True
-#   roles:
-#     - { role: grid-engine, grid_engine_master: True }
+# The grid master depends on the hosts file, as we need to know at least who we
+# are by this stage. 
+- hosts: grid-master 
+  sudo: True
+  roles:
+    - { role: grid-engine, grid_engine_master: True }
 
-# - hosts: grid-worker 
-#   sudo: True
-#   roles:
-#     - role: pipeline
-#     - { role: grid-engine, grid_engine_master: False }
+- hosts: grid-worker 
+  sudo: True
+  roles:
+    - role: pipeline
+    - { role: grid-engine, grid_engine_master: False }
 
 # - hosts: database
 #   sudo: True
