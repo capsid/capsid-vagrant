@@ -11,7 +11,7 @@
 - include: create_storage_bricks.yml
 
 - name: Storage | Create GlusterFS brick volume
-  shell: mkdir -p /data/brick1/gv0
+  shell: mkdir -p /data/brick1/gv0 creates=/data/brick1/gv0
 
 - name: Storage | Fetch gluster signing key
   command: apt-key adv --keyserver keyserver.ubuntu.com --recv 774BAC4D

@@ -8,7 +8,7 @@
 
 - name: R | Add repository
   apt_repository: 
-    repo: 'deb http://cran.utstat.utoronto.ca/bin/linux/ubuntu precise/'
+    repo: 'deb {{ debian_r_repository }} precise/'
     state: present
     update_cache: yes
 
@@ -26,4 +26,4 @@
   command: R CMD javareconf
 
 - name: R | Install RMongo
-  command: R -e 'install.packages("RMongo")'
+  command: R -e 'install.packages("RMongo")' creates=/usr/local/lib/R/site-library/RMongo

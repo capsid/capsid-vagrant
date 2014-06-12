@@ -1,0 +1,7 @@
+---
+
+# Refactored to a variable because it got broken when I used the UofT mirror. 
+# If we can't rely on it, we need to use a different one, and others might
+# want to change it some day anyway. 
+
+debian_r_repository: "http://watson.nci.nih.gov/cran_mirror/bin/linux/ubuntu"
