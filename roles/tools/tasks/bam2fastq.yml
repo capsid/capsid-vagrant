@@ -14,7 +14,7 @@
 - name: bam2fastq | Download bam2fastq
   get_url:
     dest: '{{ vendor_build }}/bam2fastq-1.1.0.tgz'
-    url: 'http://www.hudsonalpha.org/gsl/static/software/bam2fastq-1.1.0.tgz'
+    url: 'http://gsl.hudsonalpha.org/static/software/bam2fastq-1.1.0.tgz'
 
 - name: bam2fastq | Uncompress bam2fastq
   shell: tar xfz {{ vendor_build }}/bam2fastq-1.1.0.tgz chdir={{ vendor_build }} creates={{ vendor_build }}/bam2fastq-1.1.0
