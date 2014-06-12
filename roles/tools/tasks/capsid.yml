@@ -3,26 +3,12 @@
 - name: CaPSID pipeline | Install development tools
   apt: pkg={{ item.package }} state=present update_cache=yes cache_valid_time=3600
   with_items:
-    - { package: 'build-essential' }
-    - { package: 'python2.7' }
-    - { package: 'python2.7-dev' }
     - { package: 'git' }
-
-- name: CaPSID pipeline | Get pip
-  get_url:
-    dest: '/tmp/get-pip.py'
-    url: 'https://raw.github.com/pypa/pip/master/contrib/get-pip.py'
-
-- name: CaPSID pipeline | Install pip
-  shell: python2.7 /tmp/get-pip.py creates=/usr/local/bin/pip
-
-- name: CaPSID pipeline | Create /var/local
-  shell: mkdir -p /var/local creates=/var/local
 
 - name: CaPSID pipeline | Check out CaPSID from Github
   git:
     repo: https://github.com/capsid/capsid-pipeline.git
-    dest: /var/local/capsid_pipeline
+    dest: "{{ vendor_base }}/capsid_pipeline"
     update: yes
     version: develop
 
@@ -30,14 +16,11 @@
 # that would be better to reduce C compilation time. 
 
 - name: CaPSID pipeline | Install CaPSID dependencies
-  shell: pip install -e . chdir=/var/local/capsid_pipeline
+  shell: "{{ vendor_base }}/bin/pip install -e . chdir={{ vendor_base }}/capsid_pipeline"
 
 # There is no good reason why we ought to need to do this, but we might. Anyway,
 # here we go. 
 
 - name: CaPSID pipeline | Install CaPSID
-  shell: python setup.py install chdir=/var/local/capsid_pipeline
+  shell: "{{ vendor_base }}/bin/python setup.py install chdir={{ vendor_base }}/capsid_pipeline"
 
-# Add in R
-
-- include: r.yml
