@@ -18,9 +18,9 @@ provider:
 
     components:
       master: 
-        volume_size: 10
+        volume_size: 100
       worker:
-        volume_size: 10
+        volume_size: 100
 
   aws:
     access_key_id: 'xxx'
@@ -34,10 +34,10 @@ provider:
     components:
       master:
         instance_type: 'm1.small'
-        volume_size: 10
+        volume_size: 100
       worker:
         instance_type: 'm1.small'
-        volume_size: 10
+        volume_size: 100
       webserver:
         instance_type: 'm1.small'
       database: 

@@ -1,6 +1,9 @@
 ---
 # file: group_vars/all
 
+### We will typically have two different spaces: one local and one shared, even within this
+### deployment space. 
+
 vendor_base: "/mnt/ibc"
 
 vendor_build: "/mnt/build"

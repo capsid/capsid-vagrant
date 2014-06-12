@@ -1,5 +1,8 @@
 ---
 # file: roles/storage/tasks/start.yml
 # These tasks are run on all nodes
+- name: Storage | Create GlusterFS brick volume
+  shell: mkdir -p {{ vendor_data }}
+
 - name: Storage | Mount gluster volume
-  mount: name=/mnt src=localhost:/gv0 fstype=glusterfs opts=rw,noauto state=mounted
+  mount: name={{ vendor_data }} src=localhost:/gv0 fstype=glusterfs opts=rw,noauto state=mounted
