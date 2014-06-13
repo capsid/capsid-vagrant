@@ -1,0 +1,42 @@
+---
+
+# This tool provides the workflows for the CaPSID management. These depend on SGE. We separate
+# hese from the pipeline, because the pipeline is essentially public, where the workflows
+# tend not to be. Accordingly we can pull these from a deployment key-linked Bitbucket 
+# repo, which is private. 
+#
+# Some files will need decryption; commands used: http://agix.com.au/blog/?p=3737
+#
+# openssl req -x509 -nodes -newkey rsa:2048 -keyout private.pem -out public_nopass.pem
+# openssl smime -encrypt -aes256 -in bigfile.tar -binary -outform DEM -out bigfile.tar.ssl public.pem
+# openssl smime -decrypt -in bigfile.tar.ssl -binary -inform DEM -inkey privatekey.pem -out bigfile.tar
+
+# Ansible tasks required to install CaPSID secure components.
+
+- name: CaPSID secure | Copy private keys
+  copy: 
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: 
+    - { src: secure/pancan.key, dest: /etc/ssh/pancan.key }
+    - { src: secure/capsid_components.key, dest: /etc/ssh/capsid_components.key }
+
+- name: CaPSID secure | Ensure ~/.ssh exists
+  shell: mkdir -p ~/.ssh
+
+- name: CaPSID secure | Add the bitbuckey hostkey
+  shell: ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+
+- name: CaPSID secure | Get CaPSID secure components
+  git: 
+    repo: git@bitbucket.org:iborozan/pancan.git
+    dest: "{{ vendor_build }}/pancan"
+    key_file: /etc/ssh/pancan.key
+
+- name: CaPSID secure | Get components files
+  shell: "ls *.ssl | xargs -I {} basename {} '.ssl' chdir={{ vendor_base }}/pancan/components"
+  register: secure_components
+
+- name: CaPSID secure | Decrypt secure components
+  shell: openssl smime -decrypt -in {{ vendor_base }}/pancan/components/{{ item }}.ssl -binary -inform DEM -inkey /etc/ssh/capsid_components.key -out {{ vendor_build }}/{{ item }} creates={{ vendor_build }}/{{ item }}
+  with_items: secure_components.stdout_lines
