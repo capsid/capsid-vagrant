@@ -64,7 +64,7 @@
   shell: ./autogen.sh chdir={{ vendor_build }}/sga/src creates={{ vendor_build }}/sga/src/configure
 
 - name: SGA | Configure SGA
-  shell: ./configure --prefix={{ vendor_base }} --with-bamtools={{ vendor_build }}/bamtools chdir={{ vendor_build }}/sga/src creates={{ vendor_build }}/sga/src/config.h
+  shell: ./configure --prefix={{ vendor_base }} --with-bamtools={{ vendor_build }}/bamtools --with-sparsehash={{ vendor_base }} chdir={{ vendor_build }}/sga/src creates={{ vendor_build }}/sga/src/config.h
 
 - name: SGA | Build SGA
   shell: make chdir={{ vendor_build }}/sga/src creates={{ vendor_build }}/sga/bin/sga-align
