@@ -10,6 +10,8 @@
     - 'build-essential'
     - 'libxml2-dev'
     - 'libexpat1-dev'
+    - 'libssl-dev'
+    - 'libz-dev'
 
 - name: Perl | Preparing vendor build
   file: 

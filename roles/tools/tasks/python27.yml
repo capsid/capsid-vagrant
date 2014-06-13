@@ -9,6 +9,8 @@
   with_items: 
     - 'build-essential'
     - 'libsqlite3-dev'
+    - 'libssl-dev'
+    - 'libz-dev'
 
 - name: Python 2.7 | Preparing vendor build
   file: 
