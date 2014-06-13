@@ -14,7 +14,5 @@
   register: phrap_executables
 
 - name: phrap | Copy executables
-  copy: 
-    src: "{{ vendor_build }}/phrap/{{ item }}"
-    dest: "{{ vendor_base }}/bin/{{ item }}"
+  shell: cp '{{ vendor_build }}/phrap/{{ item }}' '{{ vendor_base }}/bin/{{ item }}' creates={{ vendor_base }}/bin/{{ item }}
   with_items: phrap_executables.stdout_lines
