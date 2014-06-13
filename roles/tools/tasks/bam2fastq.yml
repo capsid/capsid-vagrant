@@ -13,14 +13,14 @@
 
 - name: bam2fastq | Download bam2fastq
   get_url:
-    dest: '{{ vendor_build }}/bam2fastq-1.1.0.tgz'
-    url: 'http://gsl.hudsonalpha.org/static/software/bam2fastq-1.1.0.tgz'
+    dest: '{{ vendor_build }}/bam2fastq-{{ bam2fastq_version }}.tgz'
+    url: 'http://gsl.hudsonalpha.org/static/software/bam2fastq-{{ bam2fastq_version }}.tgz'
 
 - name: bam2fastq | Uncompress bam2fastq
-  shell: tar xfz {{ vendor_build }}/bam2fastq-1.1.0.tgz chdir={{ vendor_build }} creates={{ vendor_build }}/bam2fastq-1.1.0
+  shell: tar xfz {{ vendor_build }}/bam2fastq-{{ bam2fastq_version }}.tgz chdir={{ vendor_build }} creates={{ vendor_build }}/bam2fastq-{{ bam2fastq_version }}
 
 - name: bam2fastq | Build bam2fastq
-  shell: make chdir={{ vendor_build }}/bam2fastq-1.1.0 creates={{ vendor_build }}/bam2fastq-1.1.0/bam2fastq
+  shell: make chdir={{ vendor_build }}/bam2fastq-{{ bam2fastq_version }} creates={{ vendor_build }}/bam2fastq-{{ bam2fastq_version }}/bam2fastq
 
 - name: bam2fastq | Install bam2fastq
-  shell: cp {{ vendor_build }}/bam2fastq-1.1.0/bam2fastq {{ vendor_base }}/bin/bam2fastq creates={{ vendor_base }}/bin/bam2fastq
+  shell: cp {{ vendor_build }}/bam2fastq-{{ bam2fastq_version }}/bam2fastq {{ vendor_base }}/bin/bam2fastq creates={{ vendor_base }}/bin/bam2fastq

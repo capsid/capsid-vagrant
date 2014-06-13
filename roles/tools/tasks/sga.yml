@@ -15,20 +15,20 @@
 
 - name: SGA | Download sparsehash
   get_url:
-    dest: '{{ vendor_build }}/sparsehash-2.0.2.tar.gz'
-    url: 'https://sparsehash.googlecode.com/files/sparsehash-2.0.2.tar.gz'
+    dest: '{{ vendor_build }}/sparsehash-{{ sparsehash_version }}.tar.gz'
+    url: 'https://sparsehash.googlecode.com/files/sparsehash-{{ sparsehash_version }}.tar.gz'
 
 - name: SGA | Uncompress sparsehash
-  shell: tar xfz {{ vendor_build }}/sparsehash-2.0.2.tar.gz chdir={{ vendor_build }} creates={{ vendor_build }}/sparsehash-2.0.2
+  shell: tar xfz {{ vendor_build }}/sparsehash-{{ sparsehash_version }}.tar.gz chdir={{ vendor_build }} creates={{ vendor_build }}/sparsehash-{{ sparsehash_version }}
 
 - name: SGA | Configure sparsehash
-  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/sparsehash-2.0.2 creates={{ vendor_build }}/sparsehash-2.0.2/Makefile
+  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/sparsehash-{{ sparsehash_version }} creates={{ vendor_build }}/sparsehash-{{ sparsehash_version }}/Makefile
 
 - name: SGA | Build sparsehash
-  shell: make chdir={{ vendor_build }}/sparsehash-2.0.2 creates={{ vendor_build }}/sparsehash-2.0.2/libsparsehash.pc
+  shell: make chdir={{ vendor_build }}/sparsehash-{{ sparsehash_version }} creates={{ vendor_build }}/sparsehash-{{ sparsehash_version }}/libsparsehash.pc
 
 - name: SGA | Install sparsehash
-  shell: make install chdir={{ vendor_build }}/sparsehash-2.0.2 creates={{ vendor_base }}/include/sparsehash
+  shell: make install chdir={{ vendor_build }}/sparsehash-{{ sparsehash_version }} creates={{ vendor_base }}/include/sparsehash
 
 - name: SGA | Check out bamtools from Github
   git:

@@ -1,10 +1,12 @@
+---
+### Note the URL. Sourceforge is a heap of s...
 - name: bowtie2 | Get bowtie2
   get_url:
-    dest: '{{ vendor_build }}/bowtie2-2.2.2-linux-x86_64.zip'
-    url: 'http://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.2.2/bowtie2-2.2.2-linux-x86_64.zip/download'
+    dest: '{{ vendor_build }}/bowtie2-{{ bowtie2_version }}-linux-x86_64.zip'
+    url: 'http://ftp2.uk.freebsd.org/sites/downloads.sourceforge.net/b/bo/bowtie-bio/bowtie2/{{ bowtie2_version }}/bowtie2-{{ bowtie2_version }}-linux-x86_64.zip'
 
 - name: bowtie2 | Unpack bowtie2
-  shell: unzip {{ vendor_build }}/bowtie2-2.2.2-linux-x86_64.zip chdir={{ vendor_build }} creates={{ vendor_build }}/bowtie2-2.2.2
+  shell: unzip {{ vendor_build }}/bowtie2-{{ bowtie2_version }}-linux-x86_64.zip chdir={{ vendor_build }} creates={{ vendor_build }}/bowtie2-{{ bowtie2_version }}
 
 - name: bowtie2 | Copy bowtie2 binaries
-  shell: "find {{ vendor_build }}/bowtie2-2.2.2 -maxdepth 1 -executable -type f -exec cp '{}' {{ vendor_base }}/bin \\; chdir={{ vendor_build }} creates={{ vendor_base }}/bin/bowtie2"
+  shell: "find {{ vendor_build }}/bowtie2-{{ bowtie2_version }} -maxdepth 1 -executable -type f -exec cp '{}' {{ vendor_base }}/bin \\; chdir={{ vendor_build }} creates={{ vendor_base }}/bin/bowtie2"

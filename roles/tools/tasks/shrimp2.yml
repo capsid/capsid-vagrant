@@ -1,14 +1,14 @@
 ---
 - name: SHRiMP2 | Get SHRiMP2
   get_url:
-    dest: "{{vendor_build}}/SHRiMP_2_2_3.lx26.x86_64.tar.gz"
-    url: 'http://compbio.cs.toronto.edu/shrimp/releases/SHRiMP_2_2_3.lx26.x86_64.tar.gz'
+    dest: "{{vendor_build}}/SHRiMP_{{ shrimp2_version }}.lx26.x86_64.tar.gz"
+    url: 'http://compbio.cs.toronto.edu/shrimp/releases/SHRiMP_{{ shrimp2_version }}.lx26.x86_64.tar.gz'
 
 - name: SHRiMP2 | Unpack SHRiMP2
-  shell: tar xf {{vendor_build}}/SHRiMP_2_2_3.lx26.x86_64.tar.gz chdir={{vendor_build}} creates={{vendor_build}}/SHRiMP_2_2_3
+  shell: tar xf {{vendor_build}}/SHRiMP_{{ shrimp2_version }}.lx26.x86_64.tar.gz chdir={{vendor_build}} creates={{vendor_build}}/SHRiMP_{{ shrimp2_version }}
 
 - name: SHRiMP2 | Copy SHRiMP2 binaries
-  shell: "find {{ vendor_build }}/SHRiMP_2_2_3/bin -maxdepth 1 -executable -type f -exec cp '{}' {{ vendor_base }}/bin \\; chdir={{ vendor_build }} creates={{ vendor_base }}/bin/gmapper"
+  shell: "find {{ vendor_build }}/SHRiMP_{{ shrimp2_version }}/bin -maxdepth 1 -executable -type f -exec cp '{}' {{ vendor_base }}/bin \\; chdir={{ vendor_build }} creates={{ vendor_base }}/bin/gmapper"
 
 - name: SHRiMP2 | Copy SHRiMP2 symbolic links
-  shell: "find {{ vendor_build }}/SHRiMP_2_2_3/bin -maxdepth 1 -type l -exec cp -P '{}' {{ vendor_base }}/bin \\; chdir={{ vendor_build }} creates={{ vendor_base }}/bin/gmapper-cs"
+  shell: "find {{ vendor_build }}/SHRiMP_{{ shrimp2_version }}/bin -maxdepth 1 -type l -exec cp -P '{}' {{ vendor_base }}/bin \\; chdir={{ vendor_build }} creates={{ vendor_base }}/bin/gmapper-cs"

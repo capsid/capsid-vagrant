@@ -57,6 +57,9 @@
   roles:
     - { role: grid-engine, grid_engine_master: False }
 
+# Add all the tools that we need for the full pipeline. Order does matter
+# here. It's a good plan to build common platforms like perl and python before you
+# use them. And use the right ones. 
 - hosts: grid-worker 
   sudo: True
   roles:

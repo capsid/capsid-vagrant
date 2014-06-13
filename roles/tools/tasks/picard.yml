@@ -4,13 +4,14 @@
   with_items: 
     - 'libbz2-dev'
 
+### Note the URL. Sourceforge is a heap of s...
 - name: picard | Get picard
   get_url:
-    dest: "{{vendor_build}}/picard-tools-1.113.zip"
-    url: 'http://sourceforge.net/projects/picard/files/picard-tools/1.113/picard-tools-1.113.zip/download'
+    dest: "{{vendor_build}}/picard-tools-{{ picard_version }}.zip"
+    url: 'http://ftp2.uk.freebsd.org/sites/downloads.sourceforge.net/p/pi/picard/picard-tools/{{ picard_version }}/picard-tools-{{ picard_version }}.zip'
 
 - name: picard | Create clear directory for picard
   shell: mkdir -p {{vendor_base}}/lib/picard creates={{vendor_base}}/lib/picard
 
 - name: picard | Unpack picard
-  shell: unzip -j {{vendor_build}}/picard-tools-1.113.zip chdir={{vendor_base}}/lib/picard creates={{vendor_base}}/lib/picard/picard-1.113.jar
+  shell: unzip -j {{vendor_build}}/picard-tools-{{ picard_version }}.zip chdir={{vendor_base}}/lib/picard creates={{vendor_base}}/lib/picard/picard-{{ picard_version }}.jar

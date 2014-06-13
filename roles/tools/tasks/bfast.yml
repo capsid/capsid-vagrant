@@ -3,19 +3,20 @@
   with_items: 
     - 'libbz2-dev'
 
+### Note the URL. Sourceforge is a heap of s...
 - name: bfast | Get bfast
   get_url:
-    dest: '{{ vendor_build }}/bfast-0.7.0a.tar.gz'
-    url: 'http://sourceforge.net/projects/bfast/files/bfast/0.7.0/bfast-0.7.0a.tar.gz/download'
+    dest: '{{ vendor_build }}/bfast-{{ bfast_version }}.tar.gz'
+    url: 'http://ftp2.uk.freebsd.org/sites/downloads.sourceforge.net/b/bf/bfast/bfast/0.7.0/bfast-{{ bfast_version }}.tar.gz'
 
 - name: bfast | Unpack bfast
-  shell: tar xf {{ vendor_build }}/bfast-0.7.0a.tar.gz chdir={{ vendor_build }} creates={{ vendor_build }}/bfast-0.7.0a
+  shell: tar xf {{ vendor_build }}/bfast-{{ bfast_version }}.tar.gz chdir={{ vendor_build }} creates={{ vendor_build }}/bfast-{{ bfast_version }}
 
 - name: bfast | Configure bfast
-  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/bfast-0.7.0a creates={{ vendor_build }}/bfast-0.7.0a/config.h
+  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/bfast-{{ bfast_version }} creates={{ vendor_build }}/bfast-{{ bfast_version }}/config.h
 
 - name: bfast | Build bfast
-  shell: make chdir={{ vendor_build }}/bfast-0.7.0a creates={{ vendor_build }}/bfast-0.7.0a/bfast/bfast
+  shell: make chdir={{ vendor_build }}/bfast-{{ bfast_version }} creates={{ vendor_build }}/bfast-{{ bfast_version }}/bfast/bfast
 
 - name: bfast | Install bfast
-  shell: make install chdir={{ vendor_build }}/bfast-0.7.0a creates={{ vendor_build }}/bin/bfast
+  shell: make install chdir={{ vendor_build }}/bfast-{{ bfast_version }} creates={{ vendor_build }}/bin/bfast

@@ -17,20 +17,20 @@
 
 - name: Python 2.7 | Download Python 2.7
   get_url:
-    dest: '{{ vendor_build }}/Python-2.7.6.tgz'
-    url: 'https://www.python.org/ftp/python/2.7.6/Python-2.7.6.tgz'
+    dest: '{{ vendor_build }}/Python-{{ python_version }}.tgz'
+    url: 'https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz'
 
 - name: Python 2.7 | Unpack Python 2.7
-  shell: tar xfz {{ vendor_build }}/Python-2.7.6.tgz chdir={{ vendor_build }} creates={{ vendor_build }}/Python-2.7.6
+  shell: tar xfz {{ vendor_build }}/Python-{{ python_version }}.tgz chdir={{ vendor_build }} creates={{ vendor_build }}/Python-{{ python_version }}
 
 - name: Python 2.7 | Configure Python 2.7
-  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/Python-2.7.6 creates={{ vendor_build }}/Python-2.7.6/Makefile
+  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/Python-{{ python_version }} creates={{ vendor_build }}/Python-{{ python_version }}/Makefile
 
 - name: Python 2.7 | Build Python 2.7
-  shell: make chdir={{ vendor_build }}/Python-2.7.6 creates={{ vendor_build }}/Python-2.7.6/python
+  shell: make chdir={{ vendor_build }}/Python-{{ python_version }} creates={{ vendor_build }}/Python-{{ python_version }}/python
 
 - name: Python 2.7 | Install Python 2.7
-  shell: make install chdir={{ vendor_build }}/Python-2.7.6 creates={{ vendor_base }}/bin/python
+  shell: make install chdir={{ vendor_build }}/Python-{{ python_version }} creates={{ vendor_base }}/bin/python
 
 - name: Python 2.7 | Get pip
   get_url:

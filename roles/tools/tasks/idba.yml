@@ -15,23 +15,23 @@
 
 - name: IDBA UD | Download IDBA UD
   get_url:
-    dest: '{{ vendor_build }}/idba_ud-1.0.9.tar.gz'
-    url: 'https://hku-idba.googlecode.com/files/idba_ud-1.0.9.tar.gz'
+    dest: '{{ vendor_build }}/idba_ud-{{ idba_version }}.tar.gz'
+    url: 'https://hku-idba.googlecode.com/files/idba_ud-{{ idba_version }}.tar.gz'
 
 - name: IDBA UD | Unpack IDBA UD
-  shell: tar xfz {{ vendor_build }}/idba_ud-1.0.9.tar.gz chdir={{ vendor_build }} creates={{ vendor_build }}/idba_ud-1.0.9
+  shell: tar xfz {{ vendor_build }}/idba_ud-{{ idba_version }}.tar.gz chdir={{ vendor_build }} creates={{ vendor_build }}/idba_ud-{{ idba_version }}
 
 - name: IDBA UD | Configure IDBA UD
-  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/idba_ud-1.0.9 creates={{ vendor_build }}/idba_ud-1.0.9/config.h
+  shell: ./configure --prefix={{ vendor_base }} chdir={{ vendor_build }}/idba_ud-{{ idba_version }} creates={{ vendor_build }}/idba_ud-{{ idba_version }}/config.h
 
 - name: IDBA UD | Build IDBA UD
-  shell: make chdir={{ vendor_build }}/idba_ud-1.0.9 creates={{ vendor_build }}/idba_ud-1.0.9/bin/idba_ud
+  shell: make chdir={{ vendor_build }}/idba_ud-{{ idba_version }} creates={{ vendor_build }}/idba_ud-{{ idba_version }}/bin/idba_ud
 
 - name: IDBA UD | Install IDBA
-  shell: make install chdir={{ vendor_build }}/idba_ud-1.0.9 creates={{ vendor_build }}/idba_ud-1.0.9/bin/idba
+  shell: make install chdir={{ vendor_build }}/idba_ud-{{ idba_version }} creates={{ vendor_build }}/idba_ud-{{ idba_version }}/bin/idba
 
 - name: IDBA UD | Copy IDBA UD programs because they aren't installed
-  shell: cp {{ vendor_build }}/idba_ud-1.0.9/bin/{{ item }} {{ vendor_base }}/bin/{{ item }} creates={{ vendor_base }}/bin/{{ item }}
+  shell: cp {{ vendor_build }}/idba_ud-{{ idba_version }}/bin/{{ item }} {{ vendor_base }}/bin/{{ item }} creates={{ vendor_base }}/bin/{{ item }}
   with_items:
     - "idba_ud"
     - "fq2fa"
