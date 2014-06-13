@@ -76,6 +76,7 @@
     - { role: tools, selected_tool: 'shrimp2' }
     - { role: tools, selected_tool: 'capsid' }
     - { role: tools, selected_tool: 'capsid_secure_components' }
+    - { role: tools, selected_tool: 'phrap' }
 
 - hosts: database
   sudo: True

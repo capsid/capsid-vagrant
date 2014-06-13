@@ -23,3 +23,5 @@ idba_version: "1.0.9"
 sparsehash_version: "2.0.2"
 
 shrimp2_version: "2_2_3"
+
+phrap_version: "1.080812"

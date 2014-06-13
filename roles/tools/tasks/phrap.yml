@@ -1,0 +1,20 @@
+---
+
+- name: phrap | Create build directory
+  shell: mkdir -p {{ vendor_build }}/phrap creates={{ vendor_build }}/phrap
+
+- name: phrap | Unpack phrap
+  shell: tar xf {{ vendor_build }}/distrib_{{ phrap_version }}.tar.gz chdir={{ vendor_build }}/phrap creates={{ vendor_build }}/phrap/makefile
+
+- name: phrap | Build phrap
+  shell: make chdir={{ vendor_build }}/phrap creates={{ vendor_build }}/phrap/phrap
+
+- name: phrap | Find executables
+  shell: find -type f -perm /u+x -printf '%P\n' chdir={{ vendor_build }}/phrap
+  register: phrap_executables
+
+- name: phrap | Copy executables
+  copy: 
+    src: "{{ vendor_build }}/phrap/{{ item }}"
+    dest: "{{ vendor_base }}/bin/{{ item }}"
+  with_items: phrap_executables.stdout_lines
