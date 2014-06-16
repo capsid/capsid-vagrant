@@ -1,6 +1,6 @@
 ---
 
-# Ansible tasks required to install CaPSID.
+# Ansible tasks required to install CaPSID's workflows.
 
 - name: CaPSID | Copy private key
   copy:
@@ -19,13 +19,13 @@
     dest: "{{ vendor_base }}/pancan"
     key_file: /etc/ssh/pancan.key
 
-- name: CaPSID | Ensure directories exist
-  shell: mkdir -p {{ item }}
-  with_items:
-    - "{{ vendor_data }}/indexes"
-    - "{{ vendor_scratch }}"
-    - "{{ vendor_source }}"
-    - "{{ vendor_log }}"
+# - name: CaPSID | Ensure directories exist
+#   shell: mkdir -p {{ item }}
+#   with_items:
+#     - "{{ vendor_data }}/indexes"
+#     - "{{ vendor_scratch }}"
+#     - "{{ vendor_source }}"
+#     - "{{ vendor_log }}"
 
 # - name: CaPSID | Download reference indexes
 #   copy: 
