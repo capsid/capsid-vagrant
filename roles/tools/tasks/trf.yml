@@ -1,0 +1,10 @@
+---
+
+- name: trf | Copy binary
+  shell: cp '{{ vendor_build }}/trf407b.linux64' '{{ vendor_base }}/bin/trf' creates={{ vendor_base }}/bin/trf
+
+- name: trf | Mark binary as executable
+  file:
+    path: "{{ vendor_base }}/bin/trf"
+    mode: 0755
+    state: file
