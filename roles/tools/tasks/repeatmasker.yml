@@ -1,0 +1,18 @@
+---
+# http://www.repeatmasker.org/RepeatMasker-open-4-0-5.tar.gz
+# http://www.girinst.org/server/RepBase/protected/repeatmaskerlibraries/repeatmaskerlibraries-20140131.tar.gz
+
+- name: repeatmasker | Unpack repeatmasker
+  shell: tar xfJ {{ vendor_build }}/RepeatMasker-open-{{ repeatmasker_version }}.tar.xz chdir={{ vendor_build }} creates={{ vendor_build }}/RepeatMasker
+
+- name: repeatmasker | Unpack repeatmasker libraries
+  shell: tar xfJ {{ vendor_build }}/repeatmaskerlibraries-{{ repeatmasker_libraries_version }}.tar.xz chdir={{ vendor_build }}/RepeatMasker creates={{ vendor_build }}/RepeatMasker/Libraries/README
+
+# This is a helluva kludge. The installer is more than a bit shit, so we need to build a template file that
+# we can pipe to its input.
+
+- name: repeatmasker | Template repeatmasker configuration
+  template: src=repeatmasker_configure.j2 dest={{ vendor_build }}/RepeatMasker/repeatmasker_configure_stdin
+
+- name: repeatmasker | Configure repeatmasker
+  shell: "{{vendor_base}}/bin/perl configure < repeatmasker_configure_stdin chdir={{ vendor_build }}/RepeatMasker"

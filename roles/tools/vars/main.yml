@@ -24,4 +24,8 @@ sparsehash_version: "2.0.2"
 
 shrimp2_version: "2_2_3"
 
+repeatmasker_version: "4-0-5"
+
+repeatmasker_libraries_version: "20140131"
+
 phrap_version: "1.080812"
