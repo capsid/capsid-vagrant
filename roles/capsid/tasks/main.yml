@@ -26,8 +26,3 @@
 #     - "{{ vendor_scratch }}"
 #     - "{{ vendor_source }}"
 #     - "{{ vendor_log }}"
-
-# - name: CaPSID | Download reference indexes
-#   copy: 
-#     src: /Volumes/LaCie/data/indexes
-#     dest: "{{ vendor_data }}/"
