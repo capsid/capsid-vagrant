@@ -1,0 +1,21 @@
+---
+# roles/data-download/tasks/gene_torrent.yml
+
+- name: Data download | Install required tools
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items: 
+    - 'gdebi-core'
+
+- name: Data download | Downloading GeneTorrent packages
+  get_url:
+    dest: "/tmp/{{ item.file }}"
+    url: "{{ item.base }}{{ item.file}}"
+  with_items:
+    - { file: 'genetorrent-common_3.8.5a-ubuntu2.94-12.04_amd64.deb', base: 'https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.5a/' }
+    - { file: 'genetorrent-download_3.8.5a-ubuntu2.94-12.04_amd64.deb', base: 'https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.5a/' }
+
+- name: Data download | Installing GeneTorrent packages
+  shell: gdebi -n '/tmp/{{ item.file }}' creates={{ item.creates }}
+  with_items:
+    - { file: 'genetorrent-common_3.8.5a-ubuntu2.94-12.04_amd64.deb', base: 'https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.5a/', creates: '/usr/bin/cgquery' }
+    - { file: 'genetorrent-download_3.8.5a-ubuntu2.94-12.04_amd64.deb', base: 'https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.5a/', creates: '/usr/bin/gtdownload' }

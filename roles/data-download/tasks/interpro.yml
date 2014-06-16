@@ -1,0 +1,16 @@
+---
+# roles/data-download/tasks/interpro.yml
+
+- name: Data download | Make data directory
+  shell: mkdir -p {{item}} creates={{item}}
+  with_items:
+    - '{{ vendor_data }}/interpro'
+
+# Downloading the Interpro database, which is likely split into multiple files
+# We want both the original files and digests, just in case.
+# Note that we use rsync instead of ftp, because we're not crazy
+
+- name: Data download | Downloading Interpro database
+  shell: rsync -av --contimeout=300 "ftp.ebi.ac.uk/pub/software/unix/iprscan/5/5.4-47.0/interproscan-5.4-47.0-64-bit.tar.gz*" {{ vendor_data }}/interpro/
+  async: 7200
+  poll: 60
