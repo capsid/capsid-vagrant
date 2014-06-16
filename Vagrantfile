@@ -148,6 +148,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ansible.playbook = "dummy-playbook.yml"
       ansible.groups = @ansible_groups
       ansible.extra_vars = { original_hostname: machine_name }
+      ansible.limit = 'all'
     end
   end
 
