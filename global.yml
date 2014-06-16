@@ -78,6 +78,17 @@
     - { role: tools, selected_tool: 'capsid_secure_components' }
     - { role: tools, selected_tool: 'phrap' }
 
+# We also need the data download system. This we only need on the master node.
+# We also can grab and download the databases. This is also master-consistent, as
+# we only want one copy, and written on the shared data drives. Use a similar 
+# to the tools, to allow us to break up the components a bit more easily.
+
+- hosts: grid-master 
+  sudo: True
+  roles:
+    - { role: data-download, selected_tool: 'gene_torrent' }
+    - { role: data-download, selected_tool: 'blast' }
+
 - hosts: database
   sudo: True
   roles:
