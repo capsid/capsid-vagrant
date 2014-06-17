@@ -20,42 +20,42 @@
       args: 
         provisioner_values: "{{ provisioner_values }}"
 
-# # Next, let's generate common files, such as the hosts file. This requires the
-# # previous setup to have been run in a separate play, it seemed
-# - hosts: all
-#   sudo: True
-#   roles:
-#     - role: common
+# Next, let's generate common files, such as the hosts file. This requires the
+# previous setup to have been run in a separate play, it seemed
+- hosts: all
+  sudo: True
+  roles:
+    - role: common
 
-# - hosts: grid-master:grid-worker
-#   sudo: True
-#   roles:
-#     - role: java
-#     - role: storage
+- hosts: grid-master:grid-worker
+  sudo: True
+  roles:
+    - role: java
+    - role: storage
 
-# # Now create the main storage systems on the master
-# - hosts: grid-master
-#   sudo: True
-#   tasks:
-#     - include: roles/storage/tasks/create.yml
+# Now create the main storage systems on the master
+- hosts: grid-master
+  sudo: True
+  tasks:
+    - include: roles/storage/tasks/create.yml
 
-# # Start storage on all nodes
-# - hosts: grid-master:grid-worker
-#   sudo: True
-#   tasks:
-#     - include: roles/storage/tasks/start.yml
+# Start storage on all nodes
+- hosts: grid-master:grid-worker
+  sudo: True
+  tasks:
+    - include: roles/storage/tasks/start.yml
 
-# # The grid master depends on the hosts file, as we need to know at least who we
-# # are by this stage. 
-# - hosts: grid-master 
-#   sudo: True
-#   roles:
-#     - { role: grid-engine, grid_engine_master: True }
+# The grid master depends on the hosts file, as we need to know at least who we
+# are by this stage. 
+- hosts: grid-master 
+  sudo: True
+  roles:
+    - { role: grid-engine, grid_engine_master: True }
 
-# - hosts: grid-worker 
-#   sudo: True
-#   roles:
-#     - { role: grid-engine, grid_engine_master: False }
+- hosts: grid-worker 
+  sudo: True
+  roles:
+    - { role: grid-engine, grid_engine_master: False }
 
 # Add all the tools that we need for the full pipeline. Order does matter
 # here. It's a good plan to build common platforms like perl and python before you
@@ -85,20 +85,20 @@
 # we only want one copy, and written on the shared data drives. Use a similar 
 # to the tools, to allow us to break up the components a bit more easily.
 
-# - hosts: grid-master 
-#   sudo: True
-#   roles:
-#     - { role: data-download, selected_tool: 'gene_torrent' }
-#     - { role: data-download, selected_tool: 'blast' }
+- hosts: grid-master 
+  sudo: True
+  roles:
+    - { role: data-download, selected_tool: 'gene_torrent' }
+    - { role: data-download, selected_tool: 'blast' }
 
-# - hosts: database
-#   sudo: True
-#   roles:
-#     - role: database
+- hosts: database
+  sudo: True
+  roles:
+    - role: database
 
-# - hosts: webapp
-#   sudo: True
-#   roles:
-#     - role: java
-#     - role: webapp
+- hosts: webapp
+  sudo: True
+  roles:
+    - role: java
+    - role: webapp
 
