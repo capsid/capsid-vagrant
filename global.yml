@@ -90,6 +90,7 @@
   roles:
     - { role: data-download, selected_tool: 'gene_torrent' }
     - { role: data-download, selected_tool: 'blast' }
+    - { role: data-download, selected_tool: 's3cmd' }
 
 - hosts: database
   sudo: True

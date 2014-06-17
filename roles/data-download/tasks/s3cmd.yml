@@ -1,0 +1,19 @@
+---
+# roles/data-download/tasks/s3cmd.yml
+
+- name: Data download | Installing required dependencies
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items: 
+    - 'unzip'
+    - 'python-dateutil'
+
+- name: Data download | Get s3cmd from Github
+  get_url:
+    dest: "/tmp/s3cmd-master.zip"
+    url: "https://github.com/s3tools/s3cmd/archive/master.zip"
+
+- name: Data download | Uncompressing archive database files
+  shell: unzip /tmp/s3cmd-master.zip chdir=/tmp creates=/tmp/s3cmd-master
+
+- name: Data download | Installing s3cmd
+  shell: python /tmp/s3cmd-master/setup.py install chdir=/tmp/s3cmd-master
