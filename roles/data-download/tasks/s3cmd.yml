@@ -17,3 +17,6 @@
 
 - name: Data download | Installing s3cmd
   shell: python /tmp/s3cmd-master/setup.py install chdir=/tmp/s3cmd-master
+
+- name: Data download | Generate s3cmd configuration file
+  template: src=s3cmd.j2 dest=/etc/s3cmd.cfg
