@@ -3,6 +3,10 @@
 
 ### We will typically have two different spaces: one local and one shared, even within this
 ### deployment space. 
+###
+### There ought to be a shared root space, that we can use as a basis for code and data 
+### that can be shared effectively. AWS configuration places the bulk of the local storage
+### under /mnt, and we ought to respect that. 
 
 vendor_base: "/mnt/ibc"
 
@@ -15,3 +19,8 @@ vendor_source: "/mnt/source"
 vendor_scratch: "/mnt/scratch"
 
 vendor_log: "/mnt/log"
+
+### Some other data that is probably best exposed as public.
+
+download_sources:
+  readscan: "https://collaborators.oicr.on.ca/vferretti/pancan/capsid"

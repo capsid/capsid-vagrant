@@ -1,0 +1,24 @@
+---
+# roles/data-download/tasks/readscan.yml
+
+- name: Data download | Make data directory for readscan
+  shell: mkdir -p {{item}} creates={{item}}
+  with_items:
+    - '{{ vendor_data }}/readscan'
+
+# Downloading the readscan database files.
+
+- name: Data download | Downloading readscan data files
+  get_url:
+    dest: "{{ vendor_data}}/readscan/"
+    url: "{{ download_sources.readscan }}{{ item.file}}"
+  with_items:
+    - 'taxon.tar.xz'
+    - 'viral.genomic_plus_addeno.fna'
+    - 'viral.genomic_plus_addeno.fna.fai'
+    - 'viral.genomic_plus_addeno.fna.refstat'
+
+# Now we can uncompress the taxon data. 
+- name: Data download | Uncompressing Blast database files
+  shell: tar xfJ {{ vendor_data}}/readscan/taxon.tar.xz chdir={{ vendor_data}}/readscan creates={{ vendor_data}}/readscan/gi_taxid_nucl.dmp
+
