@@ -26,3 +26,8 @@
 
 - name: Set permissions for /etc/profile.d/vendor.sh
   file: dest=/etc/profile.d/vendor.sh mode=0644
+
+- name: Installing common packages
+  apt: pkg={{ item.package }} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - { package: 'xmlstarlet' }
