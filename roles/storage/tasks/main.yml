@@ -2,13 +2,13 @@
 # file: roles/storage/tasks/main.yml
 
 # Installation component tasks follow
-- include: glusterfs_install.yml
-  when: storage_system == 'glusterfs' and storage_action == 'install'
+- include: "{{ storage_system }}_install.yml"
+  when: storage_action == 'install'
 
 # Start component tasks follow
-- include: glusterfs_start.yml
-  when: storage_system == 'glusterfs' and storage_action == 'start'
+- include: "{{ storage_system }}_start.yml"
+  when: storage_action == 'start'
 
 # Mount component tasks follow
-- include: glusterfs_mount.yml
-  when: storage_system == 'glusterfs' and storage_action == 'mount'
+- include: "{{ storage_system }}_mount.yml"
+  when: storage_action == 'mount'
