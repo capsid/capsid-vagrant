@@ -4,3 +4,4 @@
   apt: pkg={{ item.package }} state=present update_cache=yes cache_valid_time=3600
   with_items:
     - { package: 'xmlstarlet' }
+    - { package: 'python-pycurl' }
