@@ -8,6 +8,17 @@
     setup:
       filter: '*'
 
+- hosts: all
+  sudo: True
+  roles:
+    - { role: kernel, tags: [ 'kernel' ] }
+
+- hosts: all
+  sudo: True
+  tasks:
+    setup:
+      filter: '*'
+
 # This imports provisioner-specific variables. We do this as a block, which makes access 
 # more awkward, but does allow us not to worry about other things. 
 - hosts: all

@@ -1,0 +1,31 @@
+---
+
+- name: Downloading kernel packages
+  when: ansible_kernel != '3.4.0-030400-generic'
+  get_url:
+    dest: "/tmp/{{ item }}"
+    url: "{{ kernel_base }}/{{ item }}"
+  with_items: 
+    - linux-headers-3.4.0-030400_3.4.0-030400.201205210521_all.deb
+    - linux-headers-3.4.0-030400-generic_3.4.0-030400.201205210521_amd64.deb
+    - linux-image-3.4.0-030400-generic_3.4.0-030400.201205210521_amd64.deb
+
+- name: Installing kernel packages
+  when: ansible_kernel != '3.4.0-030400-generic'
+  command: "dpkg -i /tmp/{{ item }}"
+  with_items: 
+    - linux-headers-3.4.0-030400_3.4.0-030400.201205210521_all.deb
+    - linux-headers-3.4.0-030400-generic_3.4.0-030400.201205210521_amd64.deb
+    - linux-image-3.4.0-030400-generic_3.4.0-030400.201205210521_amd64.deb
+
+- name: Restarting system
+  when: ansible_kernel != '3.4.0-030400-generic'
+  command: shutdown -r now
+  async: 0
+  poll: 0
+  ignore_errors: true
+
+- name: Waiting for server to come back
+  when: ansible_kernel != '3.4.0-030400-generic'
+  local_action: wait_for host={{ ansible_ssh_host }} port={{ ansible_ssh_port }} state=started
+  sudo: false
