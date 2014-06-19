@@ -1,0 +1,18 @@
+---
+# roles/data-download/tasks/parallel.yml
+
+- name: Data download | Installing required dependencies
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items: 
+    - 'build-essential'
+
+- name: Data download | Get GNU Parallel
+  get_url:
+    dest: /tmp/parallel-20140522.tar.bz2
+    url: http://gnu.mirror.iweb.com/parallel/parallel-20140522.tar.bz2
+
+- name: Data download | Unpack GNU Parallel
+  shell: bzip2 -dc /tmp/parallel-20140522.tar.bz2 | tar xvf - chdir=/tmp creates=/tmp/parallel-20140522
+
+- name: Data download | Install GNU Parallel
+  shell: ./configure && make && make install chdir=/tmp/parallel-20140522
