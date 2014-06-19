@@ -1,2 +1,4 @@
 ---
-storage_brick_file_system: "xfs"
+brick_file_system: "xfs"
+
+brick_base: "/data/brick"

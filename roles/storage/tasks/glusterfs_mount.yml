@@ -1,6 +1,6 @@
 ---
-# file: roles/storage/tasks/start.yml
-# These tasks are run on all nodes
+# file: roles/storage/tasks/glusterfs_mount.yml
+# These tasks are run on all client nodes
 - name: Storage | Create GlusterFS brick volume
   shell: mkdir -p {{ vendor_data }} creates={{ vendor_data }}
 

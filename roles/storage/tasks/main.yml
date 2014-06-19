@@ -1,26 +1,14 @@
 ---
 # file: roles/storage/tasks/main.yml
 
-# common tasks follow
-- name: Storage | Install pycurl 
-  apt: pkg={{ item.package }} state=present
-  with_items:
-    - { package: 'python-pycurl' }
-    - { package: 'xfsprogs' }
+# Installation component tasks follow
+- include: glusterfs_install.yml
+  when: storage_system == 'glusterfs' and storage_action == 'install'
 
-- include: create_storage_bricks.yml
+# Start component tasks follow
+- include: glusterfs_start.yml
+  when: storage_system == 'glusterfs' and storage_action == 'start'
 
-- name: Storage | Create GlusterFS brick volume
-  shell: mkdir -p /data/brick1/gv0 creates=/data/brick1/gv0
-
-- name: Storage | Fetch gluster signing key
-  command: apt-key adv --keyserver keyserver.ubuntu.com --recv 774BAC4D
-
-- name: Storage | Add gluster repository
-  apt_repository: repo='ppa:semiosis/ubuntu-glusterfs-3.4qa'
-
-- name: Storage | Install latest gluster release 
-  apt: pkg=glusterfs-server state=present
-
-- name: Storage | Start glusterfs-server
-  service: name=glusterfs-server state=started
+# Mount component tasks follow
+- include: glusterfs_mount.yml
+  when: storage_system == 'glusterfs' and storage_action == 'mount'

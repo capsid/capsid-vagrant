@@ -5,30 +5,31 @@
 
 - name: Storage | Identify unmapped block devices
   shell: "lsblk | awk '{ if ($6 == \"disk\") print \"/dev/\"$1 }' | xargs -I {} bash -c 'if [ \"`file -s -b {}`\" == \"data\" ] ; then echo {} ; fi'"
-  register: storage_block_devices
+  register: glusterfs_storage_block_devices
 
 # For those which only say "data", we need to create a file system.
 # Note this time we get a structure that contains a more complex data
 # model with the original item nested. This is done to avoid mangling 
 # existing file systems.
 - name: Storage | Create file system
-  shell: mkfs -t {{ storage_brick_file_system }} {{item}}
-  with_items: storage_block_devices.stdout_lines
+  shell: mkfs -t {{ brick_file_system }} {{item}}
+  with_items: glusterfs_storage_block_devices.stdout_lines
 
 # We want to sequentially create mount points for these, and then assign them to disks.
 # We should be safe doing this, as old mount points should be up and the corresponding
 # device won't be tagged as data any more, so they'll have been filtered out when
 # identifying unmapped block devices. 
 - name: Storage | Create mount points
-  shell: mkdir -p /data/brick{{ item.1 }}
+  shell: mkdir -p {{ brick_base }}{{ item.1 }}
   when: item.0
   with_together:
-    - storage_block_devices.stdout_lines
+    - glusterfs_storage_block_devices.stdout_lines
     - [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
 
 - name: Storage | Mount the device
-  mount: name=/data/brick{{ item.1 }} src={{ item.0 }} fstype={{ storage_brick_file_system }} opts=defaults dump=1 passno=2 state=mounted
+  mount: name={{ brick_base }}{{ item.1 }} src={{ item.0 }} fstype={{ brick_file_system }} opts=defaults dump=1 passno=2 state=mounted
   when: item.0
   with_together:
-    - storage_block_devices.stdout_lines
+    - glusterfs_storage_block_devices.stdout_lines
     - [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+

@@ -1,0 +1,24 @@
+---
+# file: roles/storage/tasks/glusterfs_install.yml
+# These tasks are run on all server nodes
+- name: Storage | Fetch glusterfs signing key
+  command: apt-key adv --keyserver keyserver.ubuntu.com --recv 774BAC4D
+
+- name: Storage | Add glusterfs repository
+  apt_repository: repo='ppa:semiosis/ubuntu-glusterfs-3.4qa'
+
+- name: Storage | Install latest glusterfs release 
+  apt: pkg={{ item.package }} state=present
+  with_items:
+    - { package: 'xfsprogs' }
+    - { package: 'glusterfs-server' }
+
+- include: create_storage_bricks.yml
+
+- name: Storage | Create GlusterFS brick volume
+  shell: mkdir -p /data/brick1/gv0 creates=/data/brick1/gv0
+  when: storage_system == 'glusterfs' and storage_action == 'install'
+
+- name: Storage | Start glusterfs-server
+  service: name=glusterfs-server state=started
+  when: storage_system == 'glusterfs' and storage_action == 'install'
