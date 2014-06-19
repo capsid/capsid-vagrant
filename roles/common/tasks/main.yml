@@ -1,33 +1,7 @@
 ---
 
-- name: Generating hosts file
-  lineinfile: 
-    dest: /etc/hosts 
-    regexp: '^{{ hostvars[item][provisioner_values.primary_network_interface]["ipv4"]["address"] | replace(".", "\\.") }}' 
-    line: '{{ hostvars[item][provisioner_values.primary_network_interface]["ipv4"]["address"] }} {{ item }}' 
-    owner: root 
-    group: root 
-    mode: 0644
-  with_items: groups['all_groups']
-  when: hostvars[item][provisioner_values.primary_network_interface] is defined
+- include: hosts.yml
 
-- name: Setting hostname to {{ inventory_hostname }}
-  hostname: name={{ inventory_hostname }}
+- include: environment.yml
 
-- name: Writing global environment variables
-  lineinfile: dest=/etc/profile.d/vendor.sh regexp='^export {{ item.key|upper }}=' line='export {{ item.key|upper }}={{ item.value }}' state=present create=yes
-  with_dict:
-    vendor_base: "{{ vendor_base }}"
-    vendor_build: "{{ vendor_build }}"
-    vendor_data: "{{ vendor_data }}"
-    vendor_source: "{{ vendor_source }}"
-    vendor_scratch: "{{ vendor_scratch }}"
-    vendor_log: "{{ vendor_scratch }}"
-
-- name: Set permissions for /etc/profile.d/vendor.sh
-  file: dest=/etc/profile.d/vendor.sh mode=0644
-
-- name: Installing common packages
-  apt: pkg={{ item.package }} state=present update_cache=yes cache_valid_time=3600
-  with_items:
-    - { package: 'xmlstarlet' }
+- include: packages.yml
