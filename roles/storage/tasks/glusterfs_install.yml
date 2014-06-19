@@ -17,8 +17,6 @@
 
 - name: Storage | Create GlusterFS brick volume
   shell: mkdir -p /data/brick1/gv0 creates=/data/brick1/gv0
-  when: storage_system == 'glusterfs' and storage_action == 'install'
 
 - name: Storage | Start glusterfs-server
   service: name=glusterfs-server state=started
-  when: storage_system == 'glusterfs' and storage_action == 'install'
