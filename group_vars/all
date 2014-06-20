@@ -24,3 +24,5 @@ vendor_log: "/mnt/log"
 
 download_sources:
   readscan: "https://collaborators.oicr.on.ca/vferretti/pancan/capsid"
+
+shared_storage_system: 'glusterfs'

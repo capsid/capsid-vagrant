@@ -41,56 +41,81 @@
 - hosts: grid-master:grid-worker
   sudo: True
   roles:
-    - { role: storage, storage_system: 'glusterfs', storage_action: 'install' }
+    - { role: storage, storage_system: {{ shared_storage_system }}, storage_action: 'install' }
 
 - hosts: grid-master
   sudo: True
   roles:
-    - { role: storage, storage_system: 'glusterfs', storage_action: 'start' }
+    - { role: storage, storage_system: {{ shared_storage_system }}, storage_action: 'start' }
 
-# Add all the tools that we need for the full pipeline. Order does matter
-# here. It's a good plan to build common platforms like perl and python before you
-# use them. And use the right ones. 
-- hosts: grid-worker 
+- hosts: grid-master:grid-worker
   sudo: True
   roles:
-    - { role: tools, selected_tool: 'r' }
-    - { role: tools, selected_tool: 'perl' }
-    - { role: tools, selected_tool: 'python27' }
-    - { role: tools, selected_tool: 'bam2fastq' }
-    - { role: tools, selected_tool: 'bfast' }
-    - { role: tools, selected_tool: 'blat' }
-    - { role: tools, selected_tool: 'bowtie2' }
-    - { role: tools, selected_tool: 'idba' }
-    - { role: tools, selected_tool: 'picard' }
-    - { role: tools, selected_tool: 'sga' }
-    - { role: tools, selected_tool: 'shrimp2' }
-    - { role: tools, selected_tool: 'capsid' }
-    - { role: tools, selected_tool: 'capsid_secure_components' }
-    - { role: tools, selected_tool: 'phrap' }
-    - { role: tools, selected_tool: 'trf' }
-    - { role: tools, selected_tool: 'repeatmasker' }
+    - { role: storage, storage_system: {{ shared_storage_system }}, storage_action: 'mount' }
 
-# We also need the data download system. This we only need on the master node.
-# We also can grab and download the databases. This is also master-consistent, as
-# we only want one copy, and written on the shared data drives. Use a similar 
-# to the tools, to allow us to break up the components a bit more easily.
+# - hosts: grid-master:grid-worker
+#   sudo: True
+#   roles:
+#     - role: java
 
-- hosts: grid-master 
-  sudo: True
-  roles:
-    - { role: data-download, selected_tool: 'gene_torrent' }
-    - { role: data-download, selected_tool: 'blast' }
-    - { role: data-download, selected_tool: 's3cmd' }
+# # The grid master depends on the hosts file, as we need to know at least who we
+# # are by this stage. 
+# - hosts: grid-master 
+#   sudo: True
+#   roles:
+#     - { role: grid-engine, grid_engine_master: True }
 
-- hosts: database
-  sudo: True
-  roles:
-    - role: database
+# - hosts: grid-worker 
+#   sudo: True
+#   roles:
+#     - { role: grid-engine, grid_engine_master: False }
 
-- hosts: webapp
-  sudo: True
-  roles:
-    - role: java
-    - role: webapp
+# # Add all the tools that we need for the full pipeline. Order does matter
+# # here. It's a good plan to build common platforms like perl and python before you
+# # use them. And use the right ones. 
+# - hosts: grid-worker 
+#   sudo: True
+#   roles:
+#     - { role: tools, selected_tool: 'r' }
+#     - { role: tools, selected_tool: 'perl' }
+#     - { role: tools, selected_tool: 'python27' }
+#     # - { role: tools, selected_tool: 'bam2fastq' }
+#     # - { role: tools, selected_tool: 'bfast' }
+#     # - { role: tools, selected_tool: 'blat' }
+#     # - { role: tools, selected_tool: 'bowtie2' }
+#     # - { role: tools, selected_tool: 'idba' }
+#     # - { role: tools, selected_tool: 'picard' }
+#     # - { role: tools, selected_tool: 'sga' }
+#     # - { role: tools, selected_tool: 'shrimp2' }
+#     # - { role: tools, selected_tool: 'capsid' }
+#     # - { role: tools, selected_tool: 'capsid_secure_components' }
+#     # - { role: tools, selected_tool: 'phrap' }
+#     # - { role: tools, selected_tool: 'trf' }
+#     # - { role: tools, selected_tool: 'repeatmasker' }
+
+# # We also need the data download system. This we only need on the master node.
+# # We also can grab and download the databases. This is also master-consistent, as
+# # we only want one copy, and written on the shared data drives. Use a similar 
+# # to the tools, to allow us to break up the components a bit more easily.
+
+# - hosts: grid-master 
+#   sudo: True
+#   vars_files:
+#     - s3_vars.yml
+#   roles:
+#     - { role: data-download, selected_tool: 'parallel' }
+#     - { role: data-download, selected_tool: 's3cmd' }
+#     - { role: data-download, selected_tool: 'gene_torrent' }
+#     - { role: data-download, selected_tool: 'blast' }
+
+# # - hosts: database
+# #   sudo: True
+# #   roles:
+# #     - role: database
+
+# # - hosts: webapp
+# #   sudo: True
+# #   roles:
+# #     - role: java
+# #     - role: webapp
 
