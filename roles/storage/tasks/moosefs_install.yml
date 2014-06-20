@@ -1,0 +1,21 @@
+- name: Storage | Install build-essential
+  apt: pkg={{ item.package }} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - { package: 'build-essential' }
+    - { package: 'pkg-config' }
+    - { package: 'libfuse-dev' }
+
+- name: Storage | Get sources
+  get_url:
+    dest: "/tmp/mfs-1.6.27-5.tar.gz"
+    url: http://sourceforge.net/projects/moosefs/files/moosefs/1.6.27/mfs-1.6.27-5.tar.gz
+
+- name: Storage | Unpack moosefs
+  shell: tar xf /tmp/mfs-1.6.27-5.tar.gz chdir=/tmp creates=/tmp/mfs-1.6.27-5
+
+- name: Storage | Configure moosefs
+  shell: ./configure chdir=/tmp/mfs-1.6.27-5 creates=/tmp/mfs-1.6.27-5/config.h
+
+- name: Storage | Build moosefs
+  shell: make && make install chdir=/tmp/mfs-1.6.27-5 creates=/usr/local/bin/mfstools
+

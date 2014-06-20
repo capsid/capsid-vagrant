@@ -1,0 +1,18 @@
+---
+# file: roles/storage/tasks/lustre_install.yml
+# These tasks are run on all server nodes
+
+- name: Storage | Install lustre 
+  apt: pkg={{ item.package }} state=present
+  with_items:
+    - { package: 'lustre-utils' }
+
+- include: create_storage_bricks.yml
+
+- name: Storage | Create lustre brick volume
+  shell: mkdir -p /data/brick1/gv0 creates=/data/brick1/gv0
+  when: storage_system == 'lustre' and storage_action == 'install'
+
+- name: Storage | Start lustre-server
+  service: name=lustre-server state=started
+  when: storage_system == 'lustre' and storage_action == 'install'
