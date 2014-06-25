@@ -5,7 +5,7 @@
   command: apt-key adv --keyserver keyserver.ubuntu.com --recv 774BAC4D
 
 - name: Storage | Add glusterfs repository
-  apt_repository: repo='ppa:semiosis/ubuntu-glusterfs-3.4qa'
+  apt_repository: repo='ppa:semiosis/ubuntu-glusterfs-{{ glusterfs_version }}'
 
 - name: Storage | Install latest glusterfs release 
   apt: pkg={{ item.package }} state=present
