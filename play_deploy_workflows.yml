@@ -1,0 +1,13 @@
+---
+# Install CaPSID's workflows, only on the master node, as it is deployed to shared 
+# storage.
+
+- hosts: grid-master
+  sudo: True
+  vars_files:
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
+  roles:
+    - role: capsid

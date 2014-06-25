@@ -45,6 +45,8 @@
 
 - include: play_deploy_data.yml
 
+- include: play_deploy_workflows.yml
+
 - include: play_deploy_database_server.yml
 
 - include: play_deploy_webapp_server.yml
