@@ -1,4 +1,4 @@
 /.vagrant
 /secure
 /vagrant_local.yml
-/s3_vars.yml
+/vars/external.yml
