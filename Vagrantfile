@@ -84,8 +84,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     machine.vm.box = "precise64"
 
     machine.vm.provider :virtualbox do |vb, override|
+
+      memory_size = $VAGRANT_CONFIG['provider']['virtualbox']['components'][machine_role]['memory_size']
+
       vb.gui = false
-      vb.customize ["modifyvm", :id, "--memory", "1024"]
+      vb.customize ["modifyvm", :id, "--memory", memory_size]
 
       # For VirtualBox, and only for VirtualBox, override private networking to use our specified address
       override.vm.network "private_network", virtualbox__intnet: true, ip: @ansible_ip_addresses[machine_name]

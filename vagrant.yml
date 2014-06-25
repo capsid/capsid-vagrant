@@ -18,9 +18,16 @@ provider:
 
     components:
       master: 
+        memory_size: '1536'
         volume_size: 100
       worker:
+        memory_size: '1536'
         volume_size: 100
+      webserver:
+        memory_size: '1024'
+      database: 
+        memory_size: '1024'
+
 
   aws:
     access_key_id: 'xxx'
