@@ -13,7 +13,7 @@
     - { package: 'xfsprogs' }
     - { package: 'glusterfs-server' }
 
-- include: create_storage_bricks.yml
+- include: ../../common/tasks/create_storage_bricks.yml
 
 - name: Storage | Create GlusterFS brick volume
   shell: mkdir -p /data/brick1/gv0 creates=/data/brick1/gv0

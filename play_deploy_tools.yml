@@ -1,0 +1,23 @@
+---
+# Add all the tools that we need for the full pipeline. Order does matter
+# here. It's a good plan to build common platforms like perl and python before you
+# use them. And use the right ones. 
+- hosts: grid-worker 
+  sudo: True
+  roles:
+    - { role: tools, selected_tool: 'r' }
+    - { role: tools, selected_tool: 'perl' }
+    - { role: tools, selected_tool: 'python27' }
+    - { role: tools, selected_tool: 'bam2fastq' }
+    - { role: tools, selected_tool: 'bfast' }
+    - { role: tools, selected_tool: 'blat' }
+    - { role: tools, selected_tool: 'bowtie2' }
+    - { role: tools, selected_tool: 'idba' }
+    - { role: tools, selected_tool: 'picard' }
+    - { role: tools, selected_tool: 'sga' }
+    - { role: tools, selected_tool: 'shrimp2' }
+    - { role: tools, selected_tool: 'capsid' }
+    - { role: tools, selected_tool: 'capsid_secure_components' }
+    - { role: tools, selected_tool: 'phrap' }
+    - { role: tools, selected_tool: 'trf' }
+    - { role: tools, selected_tool: 'repeatmasker' }

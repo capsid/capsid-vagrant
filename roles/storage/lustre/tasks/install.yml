@@ -1,6 +1,7 @@
 ---
 # file: roles/storage/tasks/lustre_install.yml
 # These tasks are run on all server nodes
+# https://build.hpdd.intel.com/job/lustre-master/arch=x86_64,build_type=client,distro=ubuntu1004,ib_stack=inkernel/
 
 - name: Storage | Install lustre 
   apt: pkg={{ item.package }} state=present
@@ -10,9 +11,9 @@
 - include: create_storage_bricks.yml
 
 - name: Storage | Create lustre brick volume
-  shell: mkdir -p /data/brick1/gv0 creates=/data/brick1/gv0
-  when: storage_system == 'lustre' and storage_action == 'install'
+  shell: mkfs.lustre --ost /data/brick1/gv0
+  when: storage_action == 'install'
 
 - name: Storage | Start lustre-server
   service: name=lustre-server state=started
-  when: storage_system == 'lustre' and storage_action == 'install'
+  when: storage_action == 'install'

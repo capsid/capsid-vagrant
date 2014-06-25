@@ -1,0 +1,7 @@
+---
+moosefs:
+  bindir: /usr/local/sbin
+  sysconfdir: /usr/local/etc/mfs
+  localstatedir: /usr/local/var/mfs
+  user: mfs
+  group: mfs

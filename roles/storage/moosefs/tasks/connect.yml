@@ -1,0 +1,47 @@
+---
+
+- name: Storage | Install xfsprogs 
+  apt: pkg={{ item.package }} state=present
+  with_items:
+    - { package: 'xfsprogs' }
+
+- name: Storage | Copy configuration files
+  command: cp {{ item }}.dist {{ item }} chdir={{ moosefs.sysconfdir }} creates={{ item }}
+  with_items:
+    - mfschunkserver.cfg
+    - mfshdd.cfg
+
+- name: Storage | Configure mfschunkserver.cfg
+  lineinfile: 
+    dest: '{{ moosefs.sysconfdir }}/mfschunkserver.cfg'
+    regexp: '^{{item.key}} ='
+    line: '{{item.key}} = {{item.value}}'
+  with_items:
+    - { key: WORKING_USER, value: 'mfs' }
+    - { key: WORKING_GROUP, value: 'mfs' }
+    - { key: MASTER_HOST, value: 'master' }
+    - { key: DATA_PATH, value: '{{ moosefs.localstatedir }}' }
+
+- include: ../../common/tasks/create_storage_bricks.yml
+
+- name: Storage | Configure mfshdd.cfg
+  lineinfile: 
+    dest: '{{ moosefs.sysconfdir }}/mfshdd.cfg'
+    line: '{{ item }}'
+  with_items:
+    - '/data/brick1'
+
+- name: Storage | Change ownership
+  command: chown -R mfs:mfs {{item}}
+  with_items:
+    - '{{ moosefs.localstatedir }}'
+    - '/data/brick1'
+
+- name: Storage | Write mfschunkserver boot script
+  template: src=../templates/mfschunkserver.init.d.j2 dest=/etc/init.d/mfschunkserver owner=root group=root mode=0755
+
+- name: Storage | Deploying mfschunkserver boot script
+  command: update-rc.d mfschunkserver defaults
+
+- name: Storage | Starting mfschunkserver
+  service: name=mfschunkserver state=started

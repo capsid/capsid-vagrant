@@ -1,0 +1,46 @@
+---
+
+### Storage - first step, install the software wherever we need it
+- hosts: grid-master:grid-worker
+  sudo: True
+  vars_files:
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+  tasks:
+    - { include_vars: "roles/storage/vars/main.yml" }
+    - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }
+    - { include: "roles/storage/{{ shared_storage_system }}/tasks/install.yml" }
+
+### Storage - second step, configure and start the master
+- hosts: grid-master
+  sudo: True
+  vars_files:
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+  tasks:
+    - { include_vars: "roles/storage/vars/main.yml" }
+    - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }
+    - { include: "roles/storage/{{ shared_storage_system }}/tasks/start.yml" }
+
+### Storage - third step, configure and start the data servers
+- hosts: grid-worker
+  sudo: True
+  vars_files:
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+  tasks:
+    - { include_vars: "roles/storage/vars/main.yml" }
+    - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }
+    - { include: "roles/storage/{{ shared_storage_system }}/tasks/connect.yml" }
+
+### Storage - fourth step, mount directories where needed
+- hosts: grid-master:grid-worker
+  sudo: True
+  vars_files:
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+  tasks:
+    - { include_vars: "roles/storage/vars/main.yml" }
+    - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }
+    - { include: "roles/storage/{{ shared_storage_system }}/tasks/mount.yml" }
+

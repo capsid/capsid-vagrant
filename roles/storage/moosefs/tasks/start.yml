@@ -1,0 +1,37 @@
+---
+
+- name: Storage | Copy configuration files
+  command: cp {{ item }}.dist {{ item }} chdir={{ moosefs.sysconfdir }} creates={{ item }}
+  with_items:
+    - mfsmaster.cfg
+    - mfsmetalogger.cfg
+    - mfsexports.cfg
+
+- name: Storage | Copy metadata files
+  command: cp {{ item }}.empty {{ item }} chdir={{ moosefs.localstatedir }} creates={{ item }}
+  with_items: 
+    - metadata.mfs
+
+- name: Storage | Configure mfsmaster.cfg
+  lineinfile: 
+    dest: '{{ moosefs.sysconfdir }}/mfsmaster.cfg'
+    regexp: '^{{item.key}} ='
+    line: '{{item.key}} = {{item.value}}'
+  with_items:
+    - { key: WORKING_USER, value: '{{ moosefs.user }}' }
+    - { key: WORKING_GROUP, value: '{{ moosefs.group }}' }
+    - { key: DATA_PATH, value: '{{ moosefs.localstatedir }}' }
+
+- name: Storage | Change ownership
+  command: chown -R mfs:mfs {{item}}
+  with_items:
+    - '{{ moosefs.localstatedir }}'
+
+- name: Storage | Write mfsmaster boot script
+  template: src=../templates/mfsmaster.init.d.j2 dest=/etc/init.d/mfsmaster owner=root group=root mode=0755
+
+- name: Storage | Deploying mfsmaster boot script
+  command: update-rc.d mfsmaster defaults
+
+- name: Storage | Starting mfsmaster
+  service: name=mfsmaster state=started

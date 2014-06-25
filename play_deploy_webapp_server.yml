@@ -1,0 +1,8 @@
+---
+
+- hosts: webapp
+  sudo: True
+  roles:
+    - role: java
+    - role: webapp
+

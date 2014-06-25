@@ -1,0 +1,17 @@
+---
+- hosts: grid-master:grid-worker
+  sudo: True
+  roles:
+    - role: java
+
+# The grid master depends on the hosts file, as we need to know at least who we
+# are by this stage. 
+- hosts: grid-master 
+  sudo: True
+  roles:
+    - { role: grid-engine, grid_engine_master: True }
+
+- hosts: grid-worker 
+  sudo: True
+  roles:
+    - { role: grid-engine, grid_engine_master: False }

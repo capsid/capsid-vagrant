@@ -1,0 +1,6 @@
+---
+- name: Storage | Create mount point
+  shell: mkdir -p {{ vendor_data }} creates={{ vendor_data }}
+
+- name: Storage | Mount shared volume
+  mount: name={{ vendor_data }} src=mfsmount fstype=fuse opts=rw,noauto,mfsmaster=master,mfssubfolder=/ state=mounted

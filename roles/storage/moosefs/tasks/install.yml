@@ -5,17 +5,22 @@
     - { package: 'pkg-config' }
     - { package: 'libfuse-dev' }
 
+- name: Storage | Create group
+  group: name=mfs state=present system=yes
+
+- name: Storage | Create user
+  user: name=mfs group=mfs state=present group=mfs system=yes
+
 - name: Storage | Get sources
   get_url:
     dest: "/tmp/mfs-1.6.27-5.tar.gz"
     url: http://sourceforge.net/projects/moosefs/files/moosefs/1.6.27/mfs-1.6.27-5.tar.gz
 
 - name: Storage | Unpack moosefs
-  shell: tar xf /tmp/mfs-1.6.27-5.tar.gz chdir=/tmp creates=/tmp/mfs-1.6.27-5
+  command: tar xf /tmp/mfs-1.6.27-5.tar.gz chdir=/tmp creates=/tmp/mfs-1.6.27
 
 - name: Storage | Configure moosefs
-  shell: ./configure chdir=/tmp/mfs-1.6.27-5 creates=/tmp/mfs-1.6.27-5/config.h
+  command: ./configure chdir=/tmp/mfs-1.6.27 creates=/tmp/mfs-1.6.27/config.h
 
 - name: Storage | Build moosefs
-  shell: make && make install chdir=/tmp/mfs-1.6.27-5 creates=/usr/local/bin/mfstools
-
+  shell: make && make install chdir=/tmp/mfs-1.6.27 creates={{ moosefs.sysconfdir }}
