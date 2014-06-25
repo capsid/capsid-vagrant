@@ -21,7 +21,7 @@
   shell: cat /tmp/blast-bucket-list.txt | parallel -j4 --no-notice "if [ ! -e /mnt/data/{} ]; then wget -nv -O /mnt/data/{} https://s3.amazonaws.com/capsid.data.swatt/{}; fi;"
 
 - name: Data download | Unpack nr* files from S3
-  shell: grep -e "nr.*gz$" /tmp/blast-bucket-list.txt | sed -n -e 's/.tar.gz//p' | parallel -j4 --no-notice "if [ ! -e /mnt/data/{}.phi ]; then tar -x -f /mnt/data/{}.tar.gz -z --directory /mnt/data/blast; fi;"
+  shell: grep -e "nr.*gz$" /tmp/blast-bucket-list.txt | sed -n -e 's/.tar.gz//p' | parallel -j4 --no-notice "if [ ! -e /mnt/data/{}.phi ]; then tar -x --overwrite -f /mnt/data/{}.tar.gz -z --directory /mnt/data/blast; fi;"
 
 - name: Data download | Unpack nt* files from S3
-  shell: grep -e "nt.*gz$" /tmp/blast-bucket-list.txt | sed -n -e 's/.tar.gz//p' | parallel -j4 --no-notice "if [ ! -e /mnt/data/{}.nni ]; then tar -x -f /mnt/data/{}.tar.gz -z --directory /mnt/data/blast; fi;"
+  shell: grep -e "nt.*gz$" /tmp/blast-bucket-list.txt | sed -n -e 's/.tar.gz//p' | parallel -j4 --no-notice "if [ ! -e /mnt/data/{}.nni ]; then tar -x --overwrite -f /mnt/data/{}.tar.gz -z --directory /mnt/data/blast; fi;"
