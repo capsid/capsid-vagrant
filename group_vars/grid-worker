@@ -1,0 +1,3 @@
+---
+# file: group_vars/grid-worker
+shared_storage_role: worker

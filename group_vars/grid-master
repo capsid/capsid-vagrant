@@ -1,0 +1,3 @@
+---
+# file: group_vars/grid-master
+shared_storage_role: master
