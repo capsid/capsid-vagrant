@@ -1,6 +1,9 @@
 ---
-
 # Ansible tasks required to install CaPSID's workflows.
+- name: CaPSID pipeline | Install development tools
+  apt: pkg={{ item.package }} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - { package: 'git' }
 
 - name: CaPSID | Copy private key
   copy:
@@ -16,7 +19,7 @@
 - name: CaPSID | Get scripts
   git: 
     repo: git@bitbucket.org:iborozan/pancan.git
-    dest: "{{ vendor_base }}/pancan"
+    dest: "{{ vendor_shared_base }}/pancan"
     key_file: /etc/ssh/pancan.key
 
 # - name: CaPSID | Ensure directories exist
