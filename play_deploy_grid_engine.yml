@@ -1,5 +1,10 @@
 ---
 - hosts: grid-master:grid-worker
+  vars_files:
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
   sudo: True
   roles:
     - role: java
@@ -7,11 +12,21 @@
 # The grid master depends on the hosts file, as we need to know at least who we
 # are by this stage. 
 - hosts: grid-master 
+  vars_files:
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
   sudo: True
   roles:
     - { role: grid-engine, grid_engine_master: True }
 
 - hosts: grid-worker 
+  vars_files:
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
   sudo: True
   roles:
     - { role: grid-engine, grid_engine_master: False }

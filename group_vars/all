@@ -8,20 +8,4 @@
 ### that can be shared effectively. AWS configuration places the bulk of the local storage
 ### under /mnt, and we ought to respect that. 
 
-vendor_base: "/mnt/ibc"
-
-vendor_build: "/mnt/build"
-
-vendor_data: "/mnt/data"
-
-vendor_source: "/mnt/source"
-
-vendor_scratch: "/mnt/scratch"
-
-vendor_log: "/mnt/log"
-
-### Some other data that is probably best exposed as public.
-
-download_sources:
-  readscan: "https://collaborators.oicr.on.ca/vferretti/pancan/capsid"
-
+shared_storage_role: none

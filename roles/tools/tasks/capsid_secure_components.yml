@@ -30,13 +30,13 @@
 - name: CaPSID secure | Get CaPSID secure components
   git: 
     repo: git@bitbucket.org:iborozan/pancan.git
-    dest: "{{ vendor_base }}/pancan"
+    dest: "{{ vendor_shared_base }}/pancan"
     key_file: /etc/ssh/pancan.key
 
 - name: CaPSID secure | Get components files
-  shell: "ls *.ssl | xargs -I {} basename {} '.ssl' chdir={{ vendor_base }}/pancan/components"
+  shell: "ls *.ssl | xargs -I {} basename {} '.ssl' chdir={{ vendor_shared_base }}/pancan/components"
   register: secure_components
 
 - name: CaPSID secure | Decrypt secure components
-  shell: openssl smime -decrypt -in {{ vendor_base }}/pancan/components/{{ item }}.ssl -binary -inform DEM -inkey /etc/ssh/capsid_components.key -out {{ vendor_build }}/{{ item }} creates={{ vendor_build }}/{{ item }}
+  shell: openssl smime -decrypt -in {{ vendor_shared_base }}/pancan/components/{{ item }}.ssl -binary -inform DEM -inkey /etc/ssh/capsid_components.key -out {{ vendor_build }}/{{ item }} creates={{ vendor_build }}/{{ item }}
   with_items: secure_components.stdout_lines

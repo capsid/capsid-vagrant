@@ -1,11 +1,12 @@
 ---
-
 ### Storage - first step, install the software wherever we need it
 - hosts: grid-master:grid-worker
   sudo: True
   vars_files:
     - 'vars/common.yml'
     - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
   tasks:
     - { include_vars: "roles/storage/vars/main.yml" }
     - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }
@@ -17,6 +18,8 @@
   vars_files:
     - 'vars/common.yml'
     - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
   tasks:
     - { include_vars: "roles/storage/vars/main.yml" }
     - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }
@@ -28,6 +31,8 @@
   vars_files:
     - 'vars/common.yml'
     - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
   tasks:
     - { include_vars: "roles/storage/vars/main.yml" }
     - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }
@@ -39,6 +44,8 @@
   vars_files:
     - 'vars/common.yml'
     - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
   tasks:
     - { include_vars: "roles/storage/vars/main.yml" }
     - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }

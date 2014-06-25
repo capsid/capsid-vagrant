@@ -1,4 +1,6 @@
 ---
+# - include: common_set_variables.yml
+
 ### We could change kernel here, and this is how we might want to do it. However, let's
 ### try to avoid it if we can. 
 

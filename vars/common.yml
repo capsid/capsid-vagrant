@@ -1,2 +1,22 @@
 ---
 shared_storage_system: 'moosefs'
+
+vendor_base: "/mnt/ibc"
+
+vendor_shared_base: "/mnt/shared"
+
+vendor_build: "/mnt/build"
+
+vendor_data: "{{ vendor_shared_base }}/data"
+
+vendor_source: "/mnt/source"
+
+vendor_scratch: "{{ vendor_shared_base }}/scratch"
+
+vendor_log: "{{ vendor_shared_base }}/log"
+
+### Some other data that is probably best exposed as public.
+
+download_sources:
+  readscan: "https://collaborators.oicr.on.ca/vferretti/pancan/capsid"
+

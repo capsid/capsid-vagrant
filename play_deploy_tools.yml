@@ -3,6 +3,11 @@
 # here. It's a good plan to build common platforms like perl and python before you
 # use them. And use the right ones. 
 - hosts: grid-worker 
+  vars_files:
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
   sudo: True
   roles:
     - { role: tools, selected_tool: 'r' }

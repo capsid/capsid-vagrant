@@ -13,9 +13,12 @@
 # This imports provisioner-specific variables. We do this as a block, which makes access 
 # more awkward, but does allow us not to worry about other things. 
 - hosts: all
-  sudo: True
   vars_files:
-    - [ 'vars/provisioning_platform_{{ provisioning_platform }}.yml', 'vars/provisioning_platform_default.yml']
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
+  sudo: True
   tasks:
     - name: set provisioner facts
       action: set_fact
@@ -25,6 +28,11 @@
 # Next, let's generate common files, such as the hosts file. This requires the
 # previous setup to have been run in a separate play, it seemed
 - hosts: all
+  vars_files:
+    - 'vars/common.yml'
+    - 'vars/external.yml'
+    - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
+    - 'vars/provisioning_platform_default.yml'
   sudo: True
   roles:
     - { role: common, tags: [ 'common' ] }
