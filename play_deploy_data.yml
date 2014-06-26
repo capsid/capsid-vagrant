@@ -10,7 +10,6 @@
     - 'vars/common.yml'
     - 'vars/external.yml'
     - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
-    - 'vars/provisioning_platform_default.yml'
   roles:
     - { role: data-download, selected_tool: 'parallel' }
     - { role: data-download, selected_tool: 's3cmd' }

@@ -17,7 +17,6 @@
     - 'vars/common.yml'
     - 'vars/external.yml'
     - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
-    - 'vars/provisioning_platform_default.yml'
   sudo: True
   tasks:
     - name: set provisioner facts
@@ -32,7 +31,6 @@
     - 'vars/common.yml'
     - 'vars/external.yml'
     - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
-    - 'vars/provisioning_platform_default.yml'
   sudo: True
   roles:
     - { role: common, tags: [ 'common' ] }

@@ -6,7 +6,6 @@
     - 'vars/common.yml'
     - 'vars/external.yml'
     - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
-    - 'vars/provisioning_platform_default.yml'
   tasks:
     - { include_vars: "roles/storage/vars/main.yml" }
     - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }
@@ -19,7 +18,6 @@
     - 'vars/common.yml'
     - 'vars/external.yml'
     - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
-    - 'vars/provisioning_platform_default.yml'
   tasks:
     - { include_vars: "roles/storage/vars/main.yml" }
     - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }
@@ -32,7 +30,6 @@
     - 'vars/common.yml'
     - 'vars/external.yml'
     - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
-    - 'vars/provisioning_platform_default.yml'
   tasks:
     - { include_vars: "roles/storage/vars/main.yml" }
     - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }
@@ -45,7 +42,6 @@
     - 'vars/common.yml'
     - 'vars/external.yml'
     - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
-    - 'vars/provisioning_platform_default.yml'
   tasks:
     - { include_vars: "roles/storage/vars/main.yml" }
     - { include_vars: "roles/storage/{{ shared_storage_system }}/vars/main.yml" }

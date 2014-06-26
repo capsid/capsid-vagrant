@@ -4,7 +4,6 @@
     - 'vars/common.yml'
     - 'vars/external.yml'
     - 'vars/provisioning_platform_{{ provisioning_platform }}.yml'
-    - 'vars/provisioning_platform_default.yml'
   sudo: True
   roles:
     - role: database
