@@ -1,6 +1,6 @@
 ---
-# file: roles/storage/tasks/glusterfs_install.yml
-# These tasks are run on all server nodes
+# file: roles/storage/glusterfs/tasks/install.yml
+# These tasks are run on all nodes
 - name: Storage | Fetch glusterfs signing key
   command: apt-key adv --keyserver keyserver.ubuntu.com --recv 774BAC4D
 

@@ -1,9 +1,13 @@
+---
+# file: roles/storage/moosefs/tasks/install.yml
+# These tasks are run on all nodes
 - name: Storage | Install build-essential
   apt: pkg={{ item.package }} state=present update_cache=yes cache_valid_time=3600
   with_items:
     - { package: 'build-essential' }
     - { package: 'pkg-config' }
     - { package: 'libfuse-dev' }
+    - { package: 'zlib1g-dev' }
 
 - name: Storage | Create group
   group: name=mfs state=present system=yes
