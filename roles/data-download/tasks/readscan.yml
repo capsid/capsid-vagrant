@@ -11,7 +11,7 @@
 - name: Data download | Downloading readscan data files
   get_url:
     dest: "{{ vendor_data}}/readscan/"
-    url: "{{ download_sources.readscan }}{{ item.file}}"
+    url: "{{ download_sources.readscan }}/{{ item }}"
   with_items:
     - 'taxon.tar.xz'
     - 'viral.genomic_plus_addeno.fna'
