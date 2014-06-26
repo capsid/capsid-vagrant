@@ -15,3 +15,4 @@
     - { role: data-download, selected_tool: 's3cmd' }
     - { role: data-download, selected_tool: 'gene_torrent' }
     - { role: data-download, selected_tool: 'blast' }
+    - { role: data-download, selected_tool: 'readscan' }
