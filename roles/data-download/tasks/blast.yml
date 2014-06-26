@@ -18,10 +18,10 @@
   shell: xmlstarlet sel -N m="http://s3.amazonaws.com/doc/2006-03-01/" -t -m '//m:Key' -v . -n /tmp/blast-bucket.xml | grep blast/ > /tmp/blast-bucket-list.txt creates=/tmp/blast-bucket-list.txt
 
 - name: Data download | Get files from S3
-  shell: cat /tmp/blast-bucket-list.txt | parallel -j4 --no-notice "if [ ! -e /mnt/data/{} ]; then wget -nv -O /mnt/data/{} https://s3.amazonaws.com/capsid.data.swatt/{}; fi;"
+  shell: cat /tmp/blast-bucket-list.txt | parallel -j4 --no-notice "if [ ! -e {{ vendor_data }}/{} ]; then wget -nv -O {{ vendor_data }}/{} https://s3.amazonaws.com/capsid.data.swatt/{}; fi;"
 
 - name: Data download | Unpack nr* files from S3
-  shell: grep -e "nr.*gz$" /tmp/blast-bucket-list.txt | sed -n -e 's/.tar.gz//p' | parallel -j4 --no-notice "if [ ! -e /mnt/data/{}.phi ]; then tar -x --overwrite -f /mnt/data/{}.tar.gz -z --directory /mnt/data/blast; fi;"
+  shell: grep -e "nr.*gz$" /tmp/blast-bucket-list.txt | sed -n -e 's/.tar.gz//p' | parallel -j4 --no-notice "if [ ! -e {{ vendor_data }}/{}.phi ]; then tar -x --overwrite -f {{ vendor_data }}/{}.tar.gz -z --directory {{ vendor_data }}/blast; fi;"
 
 - name: Data download | Unpack nt* files from S3
-  shell: grep -e "nt.*gz$" /tmp/blast-bucket-list.txt | sed -n -e 's/.tar.gz//p' | parallel -j4 --no-notice "if [ ! -e /mnt/data/{}.nni ]; then tar -x --overwrite -f /mnt/data/{}.tar.gz -z --directory /mnt/data/blast; fi;"
+  shell: grep -e "nt.*gz$" /tmp/blast-bucket-list.txt | sed -n -e 's/.tar.gz//p' | parallel -j4 --no-notice "if [ ! -e {{ vendor_data }}/{}.nni ]; then tar -x --overwrite -f {{ vendor_data }}/{}.tar.gz -z --directory {{ vendor_data }}/blast; fi;"
